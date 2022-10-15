@@ -1,67 +1,77 @@
 package model;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MovieList {
-    private Set<Movie> movieList;
+    private final List<Movie> movieList;
 
-    //EFFECTS: constructs an empty HashSet that holds Movies
+    //EFFECTS: constructs an empty ArrayList that holds Movies
     public MovieList() {
-        Set<Movie> movieList = new HashSet<>();
+        this.movieList = new ArrayList<>();
 
     }
 
     //MODIFIES: this
+    //EFFECTS: adds Movie to List, allows duplicates
     void addMovieToList(Movie m) {
-        movieList.add(m);
+        this.movieList.add(m);
 
     }
 
     //MODIFIES: this
-    public Set filterCategory(String s) {
-        for (Movie m : movieList) {
-            if (m.getCategory() != s) {
-                movieList.remove(m);
+    //EFFECTS: adds movies where category = s, to new list
+    public List<Movie> filterCategory(String s) {
+        List<Movie> filteredMovieList = new ArrayList<>();
+        for (Movie m : this.movieList) {
+            if (m.getCategory() == s) {
+                filteredMovieList.add(m);
             }
         }
-        return movieList;
+        return filteredMovieList;
     }
 
 
     //MODIFIES: this
-    public Set filterRating(int r) {
-        for (Movie m : movieList) {
-            if (m.getRating() != r) {
-                movieList.remove(m);
+    //EFFECTS: adds movies where rating = r, to new list
+    public List<Movie> filterRating(int r) {
+        List<Movie> filteredMovieList = new ArrayList<>();
+        for (Movie m : this.movieList) {
+            if (m.getRating() == r) {
+                filteredMovieList.add(m);
             }
         }
-        return movieList;
+        return filteredMovieList;
     }
 
     //MODIFIES: this
-    public Movie findMovie(String s) {
-        for (Movie m : movieList) {
+    //EFFECTS: adds movies where name = s, to new list
+    public List<Movie> findMovie(String s) {
+        List<Movie> foundMovies = new ArrayList<>();
+        for (Movie m : this.movieList) {
             if (m.getName() == s) {
-                return m;
+                foundMovies.add(m);
             }
         }
-        return null;
+        return foundMovies;
     }
 
     //MODIFIES: this
-    public Set listOfUnwatched() {
-        for (Movie m : movieList) {
-            if (m.getRating() != 0) {
-                movieList.remove(m);
+    //EFFECTS: adds movies where rating = 0, to new list
+    public List<Movie> getListOfUnwatched() {
+        List<Movie> unwatched = new ArrayList<>();
+        for (Movie m : this.movieList) {
+            if (m.getRating() == 0) {
+                unwatched.add(m);
             }
         }
-        return movieList;
+        return unwatched;
     }
 
     //getter
-    public Set getMovieList() {
-        return movieList;
+    public List<Movie> getMovieList() {
+        return this.movieList;
     }
 }

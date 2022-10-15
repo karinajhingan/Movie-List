@@ -1,8 +1,8 @@
 package model;
 
 public class Movie {
-    private String title;
-    private String category;
+    private final String title;
+    private final String category;
     private int rating; //[1-10], 0 means unwatched
 
 
@@ -14,6 +14,7 @@ public class Movie {
 
     }
 
+    //REQUIRES: r is an integer [1,10]
     //MODIFIES: this
     //EFFECTS: sets the rating of the Movie
     void setRating(int r) {
