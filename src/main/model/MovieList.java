@@ -39,7 +39,7 @@ public class MovieList {
     public List<Movie> filterRating(int r) {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.movieList) {
-            if (m.getRating() == r) {
+            if (m.getRating() >= r) {
                 filteredMovieList.add(m);
             }
         }

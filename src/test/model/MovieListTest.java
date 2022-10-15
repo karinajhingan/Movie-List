@@ -85,10 +85,12 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie3);
         this.myMovieList.addMovieToList(movie4);
         this.movie4.setRating(7);
+        this.movie2.setRating(9);
 
         List<Movie> listOfMovies = this.myMovieList.filterRating(7);
         assertTrue(listOfMovies.contains(movie4));
-        assertEquals(1, listOfMovies.size());
+        assertTrue(listOfMovies.contains(movie2));
+        assertEquals(2, listOfMovies.size());
     }
 
     @Test
@@ -101,7 +103,8 @@ public class MovieListTest {
         this.movie4.setRating(7);
 
         List<Movie> listOfMovies = this.myMovieList.filterRating(6);
-        assertEquals(0, listOfMovies.size());
+        assertTrue(listOfMovies.contains(movie4));
+        assertEquals(1, listOfMovies.size());
     }
 
     @Test
