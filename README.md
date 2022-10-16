@@ -13,7 +13,7 @@ the user will be able to use this aspect to find certain movie(s), whether it's 
  - As a user, I want to be able to add a movie
  - As a user, I want to be able to view my movies based on category or rating
  - As a user, I want to be able to rate a movie after adding it to the list
- - As a user, I want to be able to search a the name of one of my movies
+ - As a user, I want to be able to search the name of one of my movies
 
 
 
