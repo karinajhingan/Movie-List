@@ -19,37 +19,36 @@ public class MovieList {
     public void addMovieToList(Movie m) {
         if (!movieList.contains(m)) {
             this.movieList.add(m);
-
         }
     }
 
     //MODIFIES: this
-    //EFFECTS: produces list of movies where category == s
-    public List<Movie> filterCategory(String s) {
-        List<Movie> filteredMovieList = new ArrayList<>();
+    //EFFECTS: produces String of list of movies where category == s
+    public String filterCategory(String s) {
+        String filteredMovieList = "";
         for (Movie m : this.movieList) {
             if (m.getCategory().equals(s)) {
-                filteredMovieList.add(m);
+                filteredMovieList += "\n" + m.movieToString();
             }
         }
-        return filteredMovieList;
+        return filteredMovieList + "\n";
     }
 
 
     //MODIFIES: this
-    //EFFECTS: produces list of movies where rating >= r
-    public List<Movie> filterRating(int r) {
-        List<Movie> filteredMovieList = new ArrayList<>();
+    //EFFECTS: produces String of list of movies where rating >= r
+    public String filterRating(int r) {
+        String filteredMovieList = "";
         for (Movie m : this.movieList) {
             if (m.getRating() >= r) {
-                filteredMovieList.add(m);
+                filteredMovieList += "\n" + m.movieToString();
             }
         }
-        return filteredMovieList;
+        return filteredMovieList + "\n";
     }
 
     //MODIFIES: this
-    //EFFECTS: produces movies where title == s
+    //EFFECTS: returns movie where title == s or null if not found
     public Movie findMovie(String s) {
         for (Movie m : this.movieList) {
             if (m.getName().equals(s)) {
@@ -60,24 +59,24 @@ public class MovieList {
     }
 
     //MODIFIES: this
-    //EFFECTS: produces list of movies where rating == 0
-    public List<Movie> getListOfUnwatched() {
-        List<Movie> unwatched = new ArrayList<>();
+    //EFFECTS: produces String of list of movies where rating == 0
+    public String getListOfUnwatched() {
+        String unwatched = "";
         for (Movie m : this.movieList) {
             if (m.getRating() == 0) {
-                unwatched.add(m);
+                unwatched += "\n" + m.movieToString();
             }
         }
-        return unwatched;
+        return unwatched + "\n";
     }
 
     //EFFECTS: converts all movies in movie list to string
     public String movieListToString() {
-        String movieListString = new String();
+        String movieListString = "";
         for (Movie m : this.movieList) {
-            movieListString += m.movieToString() + "\n";
+            movieListString += "\n" + m.movieToString();
         }
-        return movieListString;
+        return movieListString + "\n";
     }
 
     //getter

@@ -123,12 +123,7 @@ public class MovieListApp {
     private void doFilterCategory() {
         System.out.print("Enter category: ");
         String category = input.next();
-        List<Movie> filtered = this.ml.filterCategory(category);
-        String movieListString = new String();
-        for (Movie m : filtered) {
-            movieListString += m.movieToString() + "\n";
-        }
-        System.out.print(movieListString);
+        System.out.print(this.ml.filterCategory(category));
     }
 
     //MODIFIES: this
@@ -136,19 +131,13 @@ public class MovieListApp {
     private void doFilterRating() {
         System.out.print("Enter minimum rating (integer from 1-10): ");
         int r = input.nextInt();
-        List<Movie> filtered = this.ml.filterRating(r);
-        String movieListString = new String();
-        for (Movie m : filtered) {
-            movieListString += m.movieToString() + "\n";
-        }
-        System.out.print(movieListString);
+        System.out.print(this.ml.filterRating(r));
     }
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all unwatched movies in list
     private void doGetUnwatched() {
-        this.ml.getListOfUnwatched();
-        System.out.print(this.ml.movieListToString());
+        System.out.print(this.ml.getListOfUnwatched());
     }
 
     //MODIFIES: this

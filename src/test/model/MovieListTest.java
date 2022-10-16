@@ -58,10 +58,8 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
 
-        List<Movie> listOfMovies = this.myMovieList.filterCategory("Thriller");
-        assertEquals(2, listOfMovies.size());
-        assertEquals(movie1, listOfMovies.get(0));
-        assertEquals(movie2, listOfMovies.get(1));
+        assertEquals("\nMovie: Good Time, Category: Thriller, Rating: 0" +
+                "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" + "\n", this.myMovieList.filterCategory("Thriller"));
     }
 
     @Test
@@ -70,8 +68,8 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
 
-        List<Movie> listOfMovies = this.myMovieList.filterCategory("Horror");
-        assertTrue(listOfMovies.isEmpty());
+        //List<Movie> listOfMovies = this.myMovieList.filterCategory("Horror");
+        assertEquals("\n", this.myMovieList.filterCategory("Horror"));
     }
 
     @Test
@@ -83,10 +81,8 @@ public class MovieListTest {
         this.movie4.setRating(7);
         this.movie2.setRating(9);
 
-        List<Movie> listOfMovies = this.myMovieList.filterRating(7);
-        assertTrue(listOfMovies.contains(movie4));
-        assertTrue(listOfMovies.contains(movie2));
-        assertEquals(2, listOfMovies.size());
+        assertEquals("\nMovie: Nightcrawler, Category: Thriller, Rating: 9" +
+                "\nMovie: Gattaca, Category: Sci-fi, Rating: 7" + "\n", this.myMovieList.filterRating(7));
     }
 
     @Test
@@ -97,9 +93,7 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie4);
         this.movie4.setRating(7);
 
-        List<Movie> listOfMovies = this.myMovieList.filterRating(6);
-        assertTrue(listOfMovies.contains(movie4));
-        assertEquals(1, listOfMovies.size());
+        assertEquals("\nMovie: Gattaca, Category: Sci-fi, Rating: 7" + "\n", this.myMovieList.filterRating(6));
     }
 
     @Test
@@ -110,8 +104,7 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie4);
         this.movie4.setRating(7);
 
-        List<Movie> listOfMovies = this.myMovieList.filterRating(8);
-        assertEquals(0, listOfMovies.size());
+        assertEquals("\n", this.myMovieList.filterRating(8));
     }
 
 
@@ -134,7 +127,7 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie4);
 
         Movie movie = this.myMovieList.findMovie("Buffalo 66");
-        assertEquals(null, movie);
+        assertNull(movie);
     }
 
     @Test
@@ -145,26 +138,24 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie4);
         this.movie4.setRating(7);
 
-        List<Movie> listOfMovies = this.myMovieList.getListOfUnwatched();
-        assertEquals(3, listOfMovies.size());
-        assertFalse(listOfMovies.contains(movie4));
+        assertEquals("\nMovie: Good Time, Category: Thriller, Rating: 0" +
+                "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" +
+                "\nMovie: Tenet, Category: Sci-fi, Rating: 0" + "\n", this.myMovieList.getListOfUnwatched());
     }
 
     @Test
     void testMovieListToListOfString() {
-        assertEquals("", myMovieList.movieListToString());
+        assertEquals("\n", myMovieList.movieListToString());
 
         this.myMovieList.addMovieToList(movie1);
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
         this.movie3.setRating(7);
 
-        assertEquals("Movie: Good Time, Category: Thriller, Rating: 0\n" +
-                        "Movie: Nightcrawler, Category: Thriller, Rating: 0\n" +
-                        "Movie: Tenet, Category: Sci-fi, Rating: 7\n",
+        assertEquals("\nMovie: Good Time, Category: Thriller, Rating: 0" +
+                        "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" +
+                        "\nMovie: Tenet, Category: Sci-fi, Rating: 7" + "\n",
                 myMovieList.movieListToString());
-
-
     }
 
 }
