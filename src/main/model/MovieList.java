@@ -15,18 +15,20 @@ public class MovieList {
     }
 
     //MODIFIES: this
-    //EFFECTS: adds Movie to List, allows duplicates
-    void addMovieToList(Movie m) {
-        this.movieList.add(m);
+    //EFFECTS: adds Movie to MovieList, doesn't allow duplicates
+    public void addMovieToList(Movie m) {
+        if (!movieList.contains(m)) {
+            this.movieList.add(m);
 
+        }
     }
 
     //MODIFIES: this
-    //EFFECTS: adds movies where category = s, to new list
+    //EFFECTS: produces list of movies where category == s
     public List<Movie> filterCategory(String s) {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.movieList) {
-            if (m.getCategory() == s) {
+            if (m.getCategory().equals(s)) {
                 filteredMovieList.add(m);
             }
         }
@@ -35,7 +37,7 @@ public class MovieList {
 
 
     //MODIFIES: this
-    //EFFECTS: adds movies where rating = r, to new list
+    //EFFECTS: produces list of movies where rating >= r
     public List<Movie> filterRating(int r) {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.movieList) {
@@ -47,19 +49,18 @@ public class MovieList {
     }
 
     //MODIFIES: this
-    //EFFECTS: adds movies where name = s, to new list
-    public List<Movie> findMovie(String s) {
-        List<Movie> foundMovies = new ArrayList<>();
+    //EFFECTS: produces movies where title == s
+    public Movie findMovie(String s) {
         for (Movie m : this.movieList) {
-            if (m.getName() == s) {
-                foundMovies.add(m);
+            if (m.getName().equals(s)) {
+                return m;
             }
         }
-        return foundMovies;
+        return null;
     }
 
     //MODIFIES: this
-    //EFFECTS: adds movies where rating = 0, to new list
+    //EFFECTS: produces list of movies where rating == 0
     public List<Movie> getListOfUnwatched() {
         List<Movie> unwatched = new ArrayList<>();
         for (Movie m : this.movieList) {
@@ -68,6 +69,15 @@ public class MovieList {
             }
         }
         return unwatched;
+    }
+
+    //EFFECTS: converts all movies in movie list to string
+    public String movieListToString() {
+        String movieListString = new String();
+        for (Movie m : this.movieList) {
+            movieListString += m.movieToString() + "\n";
+        }
+        return movieListString;
     }
 
     //getter

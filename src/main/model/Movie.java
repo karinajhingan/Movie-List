@@ -17,8 +17,15 @@ public class Movie {
     //REQUIRES: r is an integer [1,10]
     //MODIFIES: this
     //EFFECTS: sets the rating of the Movie
-    void setRating(int r) {
+    public void setRating(int r) {
         rating = r;
+    }
+
+
+    //EFFECTS: converts movie to string format
+    public String movieToString() {
+        return "Movie: " + title + ", Category: " + category + ", Rating: " + rating;
+
     }
 
     //getter

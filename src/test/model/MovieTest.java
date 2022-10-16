@@ -31,4 +31,11 @@ public class MovieTest {
         myMovie.setRating(8);
         assertEquals(8, myMovie.getRating());
     }
+
+    @Test
+    void testMovieToString() {
+        assertEquals("Movie: Good Time, Category: Thriller, Rating: 0", myMovie.movieToString());
+        myMovie.setRating(8);
+        assertEquals("Movie: Good Time, Category: Thriller, Rating: 8", myMovie.movieToString());
+    }
 }
