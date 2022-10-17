@@ -86,7 +86,11 @@ public class MovieListApp {
         System.out.print("Enter movie Category: ");
         String category = input.next();
         this.mo = new Movie(title, category);
-        this.ml.addMovieToList(this.mo);
+        if (null != this.ml.findMovie(title)) {
+            System.out.print("\nThis Movie is already in your list.\n");
+        } else {
+            this.ml.addMovieToList(this.mo);
+        }
     }
 
     //MODIFIES: this
@@ -100,7 +104,7 @@ public class MovieListApp {
             int r = input.nextInt();
             foundMovie.setRating(r);
         } else {
-            System.out.print("Could not find movie");
+            System.out.print("\nCould not find movie.\n");
         }
     }
 
@@ -114,7 +118,7 @@ public class MovieListApp {
         if (null != m) {
             System.out.print(m.movieToString());
         } else {
-            System.out.print("Could not find movie");
+            System.out.print("\nCould not find movie.\n");
         }
     }
 
@@ -123,6 +127,9 @@ public class MovieListApp {
     private void doFilterCategory() {
         System.out.print("Enter category: ");
         String category = input.next();
+        if (this.ml.filterCategory(category).equals("\n")) {
+            System.out.print("\nCould not find any " + category + " movies.");
+        }
         System.out.print(this.ml.filterCategory(category));
     }
 
@@ -131,19 +138,30 @@ public class MovieListApp {
     private void doFilterRating() {
         System.out.print("Enter minimum rating (integer from 1-10): ");
         int r = input.nextInt();
-        System.out.print(this.ml.filterRating(r));
+        if (this.ml.filterRating(r).equals("\n")) {
+            System.out.print("\nCould not find any movies with a rating of " + r + " or higher.\n");
+        } else {
+            System.out.print(this.ml.filterRating(r));
+        }
     }
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all unwatched movies in list
     private void doGetUnwatched() {
-        System.out.print(this.ml.getListOfUnwatched());
+        if (this.ml.getListOfUnwatched().equals("\n")) {
+            System.out.print("\nYou have watched all the movies in your list.\n");
+        } else {
+            System.out.print(this.ml.getListOfUnwatched());
+        }
     }
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all movies in list
     private void doGetMovieList() {
-        System.out.print(this.ml.movieListToString());
+        if (this.ml.getMovieList().isEmpty()) {
+            System.out.print("\nYour movie list is empty.\n");
+        } else {
+            System.out.print(this.ml.movieListToString());
+        }
     }
-
 }
