@@ -22,7 +22,7 @@ public class JsonWriter {
     //MODIFIES: this
     //EFFECTS: opens writer, throws FileNotFound if it can't open/write destination file
     public void open() throws FileNotFoundException {
-        writer = new PrintWriter(new File(destination));
+        writer = new PrintWriter(destination);
     }
 
     //MODIFIES: this

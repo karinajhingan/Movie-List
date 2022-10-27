@@ -18,7 +18,7 @@ public class JsonReaderTest extends JsonTest{
     void testNoFileFound() {
         JsonReader reader = new JsonReader("./data/noSuchFile.json");
         try {
-            MovieList ml = reader.read();
+            reader.read();
             fail("IOException wasn't thrown");
         } catch (IOException e) {
             //expected to be thrown
