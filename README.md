@@ -14,9 +14,8 @@ the user will be able to use this aspect to find certain movie(s), whether it's 
  - As a user, I want to be able to view my movies based on category or rating.
  - As a user, I want to be able to rate a movie after adding it to the list.
  - As a user, I want to be able to search the name of one of my movies.
- - As a user, I want to be able to save my movie list.
- - As a user, I want to be able to start off where I left off and see all my 
-              searches (filtered lists and specific movies).
+ - As a user, I want to be able to save and load my movie list.
+ - As a user, I want to be given the option to save my movie list before quitting.
 
 Citations:
 1: https://github.students.cs.ubc.ca/CPSC210/JsonSerializationDemo.git

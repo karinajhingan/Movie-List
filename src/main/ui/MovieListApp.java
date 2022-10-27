@@ -2,8 +2,11 @@ package ui;
 
 import model.Movie;
 import model.MovieList;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 // Referenced https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
@@ -12,8 +15,15 @@ public class MovieListApp {
     private Movie mo;
     private MovieList ml;
     private Scanner input;
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+    private static final String JSON_DESTINATION = "./data/movieList.json";
 
-    public MovieListApp() {
+    public MovieListApp() throws FileNotFoundException {
+        input = new Scanner(System.in);
+        ml = new MovieList();
+        jsonReader = new JsonReader(JSON_DESTINATION);
+        jsonWriter = new JsonWriter(JSON_DESTINATION);
         runMovieList();
     }
 
@@ -21,6 +31,7 @@ public class MovieListApp {
     private void runMovieList() {
         boolean keepGoing = true;
         String command = null;
+        input = new Scanner(System.in);
 
         init();
 
@@ -30,6 +41,11 @@ public class MovieListApp {
             command = command.toLowerCase();
 
             if (command.equals("q")) {
+                System.out.print("Would you like to save your movie list? (y/n):");
+                String answer = input.next();
+                if (answer.equals("y")) {
+                    saveToFile();
+                }
                 keepGoing = false;
             } else {
                 processCommand(command);
@@ -41,7 +57,11 @@ public class MovieListApp {
     //MODIFIES: this
     //EFFECTS: processes user command
     private void processCommand(String command) {
-        if (command.equals("add")) {
+        if (command.equals("load")) {
+            doLoadMovieList();
+        } else if (command.equals("save")) {
+            saveToFile();
+        } else if (command.equals("add")) {
             doAddMovieToList();
         } else if (command.equals("rate")) {
             doSetRating();
@@ -71,6 +91,8 @@ public class MovieListApp {
     //EFFECTS: displays menu of options to user
     private void movieMenu() {
         System.out.println("\nSelect from:");
+        System.out.println("\tload -> Load your movie list");
+        System.out.println("\tsave -> Save your movie list");
         System.out.println("\tadd -> Add Movie");
         System.out.println("\trate -> Rate Movie");
         System.out.println("\tsearch -> Search Movie List");
@@ -165,6 +187,30 @@ public class MovieListApp {
             System.out.print("\nYour movie list is empty.\n");
         } else {
             System.out.print(this.ml.movieListToString());
+        }
+    }
+
+
+    //EFFECTS: saved movie list to a file
+    private void saveToFile() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(ml);
+            jsonWriter.close();
+            System.out.println("Saved to " + JSON_DESTINATION);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to save file");
+        }
+    }
+
+    //MODIFIES: this
+    //EFFECTS: load movie list from file
+    private void doLoadMovieList() {
+        try {
+            ml = jsonReader.read();
+            System.out.println("Loaded your movie list from " + JSON_DESTINATION);
+        } catch (IOException e) {
+            System.out.println("Unable to read file");
         }
     }
 }
