@@ -1,11 +1,15 @@
 package model;
 
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MovieList {
+public class MovieList implements Writable {
     private final List<Movie> movieList;
 
     //EFFECTS: constructs an empty ArrayList that holds Movies
@@ -82,5 +86,23 @@ public class MovieList {
     //getter
     public List<Movie> getMovieList() {
         return this.movieList;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        //json.put("name", name);
+        json.put("movies", moviesToJson());
+        return json;
+    }
+
+    //EFFECTS: returns movies in this Movie List as a JSON array
+    private JSONArray moviesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Movie m : movieList) {
+            jsonArray.put(m.toJson());
+        }
+        return jsonArray;
     }
 }

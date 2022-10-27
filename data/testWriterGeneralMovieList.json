@@ -1,0 +1,17 @@
+{"movies": [
+    {
+        "rating": 0,
+        "title": "Good Time",
+        "category": "Thriller"
+    },
+    {
+        "rating": 8,
+        "title": "Nightcrawler",
+        "category": "Thriller"
+    },
+    {
+        "rating": 0,
+        "title": "Tenet",
+        "category": "Sci-fi"
+    }
+]}

@@ -1,6 +1,9 @@
 package model;
 
-public class Movie {
+import org.json.JSONObject;
+import persistence.Writable;
+
+public class Movie implements Writable {
     private final String title;
     private final String category;
     private int rating; //[1-10], 0 means unwatched
@@ -43,6 +46,15 @@ public class Movie {
     //getter
     public String getCategory() {
         return category;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("title", title);
+        json.put("category", category);
+        json.put("rating", rating);
+        return json;
     }
 }
 

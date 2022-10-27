@@ -6,6 +6,8 @@ import model.MovieList;
 import java.util.List;
 import java.util.Scanner;
 
+// Referenced https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
+
 public class MovieListApp {
     private Movie mo;
     private MovieList ml;
@@ -15,6 +17,7 @@ public class MovieListApp {
         runMovieList();
     }
 
+    //EFFECTS: runs movieList
     private void runMovieList() {
         boolean keepGoing = true;
         String command = null;
