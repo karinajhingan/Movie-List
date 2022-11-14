@@ -105,7 +105,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts adding a movie to the list
-    private void doAddMovieToList() {
+    public void doAddMovieToList() {
         System.out.print("Enter movie title to add: ");
         String title = input.next();
         System.out.print("Enter movie Category: ");
@@ -120,7 +120,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts rating a movie
-    private void doSetRating() {
+    public void doSetRating() {
         System.out.print("Enter movie title to rate: ");
         String title = input.next();
         if (null != this.ml.findMovie(title)) {
@@ -135,7 +135,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts searching a movie from the list
-    private void doFindMovie() {
+    public void doFindMovie() {
         String title = "";
         System.out.print("Enter title: ");
         title = input.next();
@@ -149,7 +149,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all movies in list that match the category
-    private void doFilterCategory() {
+    public void doFilterCategory() {
         System.out.print("Enter category: ");
         String category = input.next();
         if (this.ml.filterCategory(category).equals("\n")) {
@@ -160,7 +160,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all movies in list >= the rating
-    private void doFilterRating() {
+    public void doFilterRating() {
         System.out.print("Enter minimum rating (integer from 1-10): ");
         int r = input.nextInt();
         if (this.ml.filterRating(r).equals("\n")) {
@@ -172,7 +172,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all unwatched movies in list
-    private void doGetUnwatched() {
+    public void doGetUnwatched() {
         if (this.ml.getListOfUnwatched().equals("\n")) {
             System.out.print("\nYou have watched all the movies in your list.\n");
         } else {
@@ -182,7 +182,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all movies in list
-    private void doGetMovieList() {
+    public void doGetMovieList() {
         if (this.ml.getMovieList().isEmpty()) {
             System.out.print("\nYour movie list is empty.\n");
         } else {
@@ -192,7 +192,7 @@ public class MovieListApp {
 
 
     //EFFECTS: saved movie list to a file
-    private void saveToFile() {
+    public void saveToFile() {
         try {
             jsonWriter.open();
             jsonWriter.write(ml);
@@ -205,7 +205,7 @@ public class MovieListApp {
 
     //MODIFIES: this
     //EFFECTS: load movie list from file
-    private void doLoadMovieList() {
+    public void doLoadMovieList() {
         try {
             ml = jsonReader.read();
             System.out.println("Loaded your movie list from " + JSON_DESTINATION);
