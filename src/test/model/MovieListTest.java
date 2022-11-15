@@ -26,14 +26,14 @@ public class MovieListTest {
 
     @Test
     void testEmptyList() {
-        List<Movie> listOfMovies = myMovieList.getMovieList();
+        List<Movie> listOfMovies = myMovieList.getListOfMovie();
         assertTrue(listOfMovies.isEmpty());
     }
 
     @Test
     void testAddMovieToEmptyList() {
         this.myMovieList.addMovieToList(movie1);
-        List<Movie> listOfMovies = myMovieList.getMovieList();
+        List<Movie> listOfMovies = myMovieList.getListOfMovie();
         assertTrue(listOfMovies.contains(movie1));
         assertEquals(1, listOfMovies.size());
     }
@@ -45,7 +45,7 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
 
-        List<Movie> listOfMovies = myMovieList.getMovieList();
+        List<Movie> listOfMovies = myMovieList.getListOfMovie();
         assertTrue(listOfMovies.contains(movie1));
         assertTrue(listOfMovies.contains(movie2));
         assertTrue(listOfMovies.contains(movie3));

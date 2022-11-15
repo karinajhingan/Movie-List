@@ -36,7 +36,7 @@ public class JsonWriterTest extends JsonTest {
 
             JsonReader reader = new JsonReader("./data/testWriterEmptyMovieList.json");
             ml = reader.read();
-            assertEquals(0, ml.getMovieList().size());
+            assertEquals(0, ml.getListOfMovie().size());
         } catch (IOException e) {
             fail("Issue writing empty file");
         }
@@ -60,8 +60,8 @@ public class JsonWriterTest extends JsonTest {
 
             JsonReader reader = new JsonReader("./data/testWriterGeneralMovieList.json");
             ml = reader.read();
-            List<Movie> movies = ml.getMovieList();
-            assertEquals(3, ml.getMovieList().size());
+            List<Movie> movies = ml.getListOfMovie();
+            assertEquals(3, ml.getListOfMovie().size());
             checkMovie("Good Time", "Thriller", 0, movies.get(0));
             checkMovie("Nightcrawler", "Thriller", 8, movies.get(1));
             checkMovie("Tenet", "Sci-fi",0, movies.get(2));

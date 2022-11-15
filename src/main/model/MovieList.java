@@ -10,19 +10,20 @@ import java.util.List;
 
 
 public class MovieList implements Writable {
-    private final List<Movie> movieList;
+    private final List<Movie> listOfMovie;
+    private MovieList movieList;
 
     //EFFECTS: constructs an empty ArrayList that holds Movies
     public MovieList() {
-        this.movieList = new ArrayList<>();
+        this.listOfMovie = new ArrayList<>();
 
     }
 
     //MODIFIES: this
     //EFFECTS: adds Movie to MovieList, doesn't allow duplicates
     public void addMovieToList(Movie m) {
-        if (!movieList.contains(m)) {
-            this.movieList.add(m);
+        if (!listOfMovie.contains(m)) {
+            this.listOfMovie.add(m);
         }
     }
 
@@ -30,14 +31,12 @@ public class MovieList implements Writable {
     //EFFECTS: produces String of list of movies where category == s
     public List<Movie> filterCategory(String s) {
         List<Movie> filteredMovieList = new ArrayList<>();
-        for (Movie m : this.movieList) {
+        for (Movie m : this.listOfMovie) {
             if (m.getCategory().equals(s)) {
                 filteredMovieList.add(m);
-                //todo filteredMovieList += "\n" + m.movieToString();
             }
         }
         return filteredMovieList;
-        //todo filteredMovieList + "\n";
     }
 
 
@@ -45,20 +44,18 @@ public class MovieList implements Writable {
     //EFFECTS: produces String of list of movies where rating >= r
     public List<Movie> filterRating(int r) {
         List<Movie> filteredMovieList = new ArrayList<>();
-        for (Movie m : this.movieList) {
+        for (Movie m : this.listOfMovie) {
             if (m.getRating() >= r) {
-                //todo filteredMovieList += "\n" + m.movieToString();
                 filteredMovieList.add(m);
             }
         }
         return filteredMovieList;
-                //todo filteredMovieList + "\n";
     }
 
     //MODIFIES: this
     //EFFECTS: returns movie where title == s or null if not found
     public Movie findMovie(String s) {
-        for (Movie m : this.movieList) {
+        for (Movie m : this.listOfMovie) {
             if (m.getName().equals(s)) {
                 return m;
             }
@@ -70,28 +67,44 @@ public class MovieList implements Writable {
     //EFFECTS: produces String of list of movies where rating == 0
     public List<Movie> getListOfUnwatched() {
         List<Movie> unwatched = new ArrayList<>();
-        for (Movie m : this.movieList) {
+        for (Movie m : this.listOfMovie) {
             if (m.getRating() == 0) {
                 unwatched.add(m);
-                //todo unwatched += "\n" + m.movieToString();
             }
         }
         return unwatched;
-                //todo unwatched + "\n";
     }
 
     //EFFECTS: converts all movies in movie list to string
     public String movieListToString() {
         String movieListString = "";
-        for (Movie m : this.movieList) {
+        for (Movie m : this.listOfMovie) {
             movieListString += "\n" + m.movieToString();
         }
         return movieListString + "\n";
     }
 
+    //todo, add spec, and test
+    public List<String> movieListToListOfString() {
+        List<String> stringList = new ArrayList<>();
+        for (Movie m : this.listOfMovie) {
+            stringList.add(m.movieToString());
+        }
+        return stringList;
+    }
+
+    //todo add spec and test
+    public MovieList listToMovieList(List<Movie> l) {
+        movieList = new MovieList();
+        for (Movie m : l) {
+            movieList.addMovieToList(m);
+        }
+        return movieList;
+    }
+
     //getter
-    public List<Movie> getMovieList() {
-        return this.movieList;
+    public List<Movie> getListOfMovie() {
+        return this.listOfMovie;
     }
 
     @Override
@@ -105,7 +118,7 @@ public class MovieList implements Writable {
     private JSONArray moviesToJson() {
         JSONArray jsonArray = new JSONArray();
 
-        for (Movie m : movieList) {
+        for (Movie m : listOfMovie) {
             jsonArray.put(m.toJson());
         }
         return jsonArray;

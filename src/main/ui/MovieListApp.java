@@ -183,7 +183,7 @@ public class MovieListApp {
     //MODIFIES: this
     //EFFECTS: conducts displaying all movies in list
     public void doGetMovieList() {
-        if (this.ml.getMovieList().isEmpty()) {
+        if (this.ml.getListOfMovie().isEmpty()) {
             System.out.print("\nYour movie list is empty.\n");
         } else {
             System.out.print(this.ml.movieListToString());

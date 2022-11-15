@@ -7,61 +7,62 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MovieListUI extends JFrame {
+    private static final int WIDTH = 800;
+    private static final int HEIGHT = 800;
+    private static final int BORDER_GAP = 13;
     private MovieList ml;
     private Movie movie;
     private MovieListApp mlApp;
 
     private JPanel listArea;
-    private JList javaList;
-    private DefaultListModel<Movie> listModel;
+    private static JList javaList;
+    private static DefaultListModel<String> listModel;
 
     public MovieListUI() {
         super("Movie List");
         ml = new MovieList();
+        DefaultListModel<String> listModel = new DefaultListModel<>();
+        javaList = new JList<>(listModel);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setPreferredSize(new Dimension(400, 400));
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        getContentPane().setBackground(Color.DARK_GRAY);
 
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(13, 13, 13, 13));
-        setLayout(new FlowLayout());
+        ((JPanel) getContentPane()).setBorder(new EmptyBorder(BORDER_GAP, BORDER_GAP, BORDER_GAP, BORDER_GAP));
+        setLayout(new BorderLayout());
 
         addAllButtons();
         addListArea();
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
-        setResizable(false);
+        setResizable(true);
+
     }
-
-    /*super("Movie List");
-    ml = new MovieList();
-
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    setPreferredSize(new Dimension(400, 400));
-
-        ((JPanel) getContentPane()).setBorder(new EmptyBorder(13, 13, 13, 13));
-    setLayout(new FlowLayout());
-
-    addAllButtons();
-    addListArea();
-    pack();
-    setLocationRelativeTo(null);
-    setVisible(true);
-    setResizable(false);*/
 
     public void addListArea() {
         listArea = new JPanel();
-        listArea.setLayout(new GridLayout(0,2));
-        listArea.setSize(new Dimension(10,20));
+        listArea.setLayout(new GridLayout(0,1));
+        listArea.setSize(new Dimension(0,0));
+        listArea.setPreferredSize(new Dimension(WIDTH / 2, HEIGHT - (2 * BORDER_GAP)));
         add(listArea, BorderLayout.WEST);
+
+        //DefaultListModel<String> listModel = new DefaultListModel<>();
+        //javaList = new JList<>(listModel);
+        //todo delete if works :) listArea.removeAll();
+        listArea.add(javaList);
     }
 
     public void addAllButtons() {
         JPanel buttonArea = new JPanel();
         buttonArea.setLayout(new GridLayout(0, 1));
         buttonArea.setSize(new Dimension(0, 0));
+        buttonArea.setPreferredSize(new Dimension(WIDTH / 3, HEIGHT - (2 * BORDER_GAP)));
+        buttonArea.setBackground(Color.black);
         add(buttonArea, BorderLayout.EAST);
 
         buttonArea.add(new JButton(new AllMovieAction()));
@@ -84,11 +85,12 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            listModel = new DefaultListModel<>();
-            listModel.addAll(ml.getMovieList());
-            javaList = new JList<>(listModel);
-            listArea.removeAll();
-            listArea.add(javaList);
+            MovieListUI.listModel.clear();
+            MovieListUI.listModel.addAll(ml.movieListToListOfString());
+            MovieListUI.javaList = new JList<>(listModel);
+
+            //listArea.removeAll();
+            //listArea.add(javaList);
         }
     }
 
@@ -104,6 +106,15 @@ public class MovieListUI extends JFrame {
             String inputCategory = JOptionPane.showInputDialog("Category:");
             movie = new Movie(inputTitle, inputCategory);
             ml.addMovieToList(movie);
+
+            // todo delete commented listModel = new DefaultListModel<>();
+            //todo what happens if we add a movie while weve got a a filtered list displayed, maybe removeAll()
+            listModel.addAll(ml.movieListToListOfString());
+            javaList = new JList<>(listModel);
+
+            //listArea.removeAll();
+
+            //listArea.add(javaList);
         }
     }
 
@@ -123,6 +134,13 @@ public class MovieListUI extends JFrame {
                 String r = JOptionPane.showInputDialog("Enter Rating:");
                 movie.setRating(Integer.parseInt(r));
             }
+
+            listModel = new DefaultListModel<>();
+            listModel.addAll(ml.movieListToListOfString());
+            javaList = new JList<>(listModel);
+
+            listArea.removeAll();
+            listArea.add(javaList);
         }
     }
 
@@ -136,8 +154,9 @@ public class MovieListUI extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Enter Movie Title:");
             listModel = new DefaultListModel<>();
-            listModel.addElement(ml.findMovie(inputTitle));
+            listModel.addElement(ml.findMovie(inputTitle).movieToString());
             javaList = new JList<>(listModel);
+
             listArea.removeAll();
             listArea.add(javaList);
         }
@@ -153,8 +172,9 @@ public class MovieListUI extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             String inputCategory = JOptionPane.showInputDialog("Enter Category:");
             listModel = new DefaultListModel<>();
-            listModel.addAll(ml.filterCategory(inputCategory));
+            listModel.addAll(ml.listToMovieList(ml.filterCategory(inputCategory)).movieListToListOfString());
             javaList = new JList<>(listModel);
+
             listArea.removeAll();
             listArea.add(javaList);
         }
@@ -169,9 +189,11 @@ public class MovieListUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputMinRating = JOptionPane.showInputDialog("Enter Minimum Rating:");
+            int r = Integer.parseInt(inputMinRating);
             listModel = new DefaultListModel<>();
-            listModel.addAll(ml.filterRating(Integer.parseInt(inputMinRating)));
+            listModel.addAll(ml.listToMovieList(ml.filterRating(r)).movieListToListOfString());
             javaList = new JList<>(listModel);
+
             listArea.removeAll();
             listArea.add(javaList);
 
@@ -187,8 +209,9 @@ public class MovieListUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             listModel = new DefaultListModel<>();
-            listModel.addAll(ml.getListOfUnwatched());
+            listModel.addAll(ml.listToMovieList(ml.getListOfUnwatched()).movieListToListOfString());
             javaList = new JList<>(listModel);
+
             listArea.removeAll();
             listArea.add(javaList);
         }
