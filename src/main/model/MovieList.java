@@ -28,27 +28,31 @@ public class MovieList implements Writable {
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where category == s
-    public String filterCategory(String s) {
-        String filteredMovieList = "";
+    public List<Movie> filterCategory(String s) {
+        List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.movieList) {
             if (m.getCategory().equals(s)) {
-                filteredMovieList += "\n" + m.movieToString();
+                filteredMovieList.add(m);
+                //todo filteredMovieList += "\n" + m.movieToString();
             }
         }
-        return filteredMovieList + "\n";
+        return filteredMovieList;
+        //todo filteredMovieList + "\n";
     }
 
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where rating >= r
-    public String filterRating(int r) {
-        String filteredMovieList = "";
+    public List<Movie> filterRating(int r) {
+        List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.movieList) {
             if (m.getRating() >= r) {
-                filteredMovieList += "\n" + m.movieToString();
+                //todo filteredMovieList += "\n" + m.movieToString();
+                filteredMovieList.add(m);
             }
         }
-        return filteredMovieList + "\n";
+        return filteredMovieList;
+                //todo filteredMovieList + "\n";
     }
 
     //MODIFIES: this
@@ -64,14 +68,16 @@ public class MovieList implements Writable {
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where rating == 0
-    public String getListOfUnwatched() {
-        String unwatched = "";
+    public List<Movie> getListOfUnwatched() {
+        List<Movie> unwatched = new ArrayList<>();
         for (Movie m : this.movieList) {
             if (m.getRating() == 0) {
-                unwatched += "\n" + m.movieToString();
+                unwatched.add(m);
+                //todo unwatched += "\n" + m.movieToString();
             }
         }
-        return unwatched + "\n";
+        return unwatched;
+                //todo unwatched + "\n";
     }
 
     //EFFECTS: converts all movies in movie list to string
@@ -91,7 +97,6 @@ public class MovieList implements Writable {
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();
-        //json.put("name", name);
         json.put("movies", moviesToJson());
         return json;
     }

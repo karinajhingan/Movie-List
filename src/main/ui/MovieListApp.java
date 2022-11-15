@@ -151,7 +151,7 @@ public class MovieListApp {
     //EFFECTS: conducts displaying all movies in list that match the category
     public void doFilterCategory() {
         System.out.print("Enter category: ");
-        String category = input.next();
+        String category = input.next().toLowerCase();
         if (this.ml.filterCategory(category).equals("\n")) {
             System.out.print("\nCould not find any " + category + " movies.");
         }
@@ -166,7 +166,7 @@ public class MovieListApp {
         if (this.ml.filterRating(r).equals("\n")) {
             System.out.print("\nCould not find any movies with a rating of " + r + " or higher.\n");
         } else {
-            System.out.print(this.ml.filterRating(r));
+            System.out.print(this.ml.filterRating(r).toString());
         }
     }
 
@@ -176,7 +176,7 @@ public class MovieListApp {
         if (this.ml.getListOfUnwatched().equals("\n")) {
             System.out.print("\nYou have watched all the movies in your list.\n");
         } else {
-            System.out.print(this.ml.getListOfUnwatched());
+            System.out.print(this.ml.getListOfUnwatched().toString());
         }
     }
 
