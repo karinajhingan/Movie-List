@@ -2,13 +2,15 @@ package ui;
 
 import model.Movie;
 import model.MovieList;
+import persistence.JsonReader;
+import persistence.JsonWriter;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MovieListUI extends JFrame {
     private static final int WIDTH = 800;
@@ -16,16 +18,23 @@ public class MovieListUI extends JFrame {
     private static final int BORDER_GAP = 13;
     private MovieList ml;
     private Movie movie;
-    private MovieListApp mlApp;
+
+    private JsonReader jsonReader;
+    private JsonWriter jsonWriter;
+    private static final String JSON_DESTINATION = "./data/movieList.json";
 
     private JPanel listArea;
-    private static JList javaList;
-    private static DefaultListModel<String> listModel;
+    private JList javaList;
+    private DefaultListModel<String> listModel;
 
-    public MovieListUI() {
+    private static final String ERROR_MSG = "Error: Could not find Movie";
+
+    public MovieListUI() throws FileNotFoundException {
         super("Movie List");
         ml = new MovieList();
-        DefaultListModel<String> listModel = new DefaultListModel<>();
+        jsonReader = new JsonReader(JSON_DESTINATION);
+        jsonWriter = new JsonWriter(JSON_DESTINATION);
+        listModel = new DefaultListModel<>();
         javaList = new JList<>(listModel);
 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -41,7 +50,6 @@ public class MovieListUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(true);
-
     }
 
     public void addListArea() {
@@ -50,10 +58,6 @@ public class MovieListUI extends JFrame {
         listArea.setSize(new Dimension(0,0));
         listArea.setPreferredSize(new Dimension(WIDTH / 2, HEIGHT - (2 * BORDER_GAP)));
         add(listArea, BorderLayout.WEST);
-
-        //DefaultListModel<String> listModel = new DefaultListModel<>();
-        //javaList = new JList<>(listModel);
-        //todo delete if works :) listArea.removeAll();
         listArea.add(javaList);
     }
 
@@ -85,12 +89,8 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            MovieListUI.listModel.clear();
-            MovieListUI.listModel.addAll(ml.movieListToListOfString());
-            MovieListUI.javaList = new JList<>(listModel);
-
-            //listArea.removeAll();
-            //listArea.add(javaList);
+            listModel.clear();
+            listModel.addAll(ml.movieListToListOfString());
         }
     }
 
@@ -107,14 +107,8 @@ public class MovieListUI extends JFrame {
             movie = new Movie(inputTitle, inputCategory);
             ml.addMovieToList(movie);
 
-            // todo delete commented listModel = new DefaultListModel<>();
-            //todo what happens if we add a movie while weve got a a filtered list displayed, maybe removeAll()
+            listModel.clear();
             listModel.addAll(ml.movieListToListOfString());
-            javaList = new JList<>(listModel);
-
-            //listArea.removeAll();
-
-            //listArea.add(javaList);
         }
     }
 
@@ -126,21 +120,16 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            String inputTitle = JOptionPane.showInputDialog("Enter Movie Title to Rate:");
+            String inputTitle = JOptionPane.showInputDialog("Enter movie title to rate:");
             movie = ml.findMovie(inputTitle);
             if (movie == null) {
-                JOptionPane.showMessageDialog(null, "Error: Could not find Movie");
+                JOptionPane.showMessageDialog(null, ERROR_MSG);
             } else {
-                String r = JOptionPane.showInputDialog("Enter Rating:");
+                String r = JOptionPane.showInputDialog("Enter rating (integer):");
                 movie.setRating(Integer.parseInt(r));
             }
-
-            listModel = new DefaultListModel<>();
+            listModel.clear();
             listModel.addAll(ml.movieListToListOfString());
-            javaList = new JList<>(listModel);
-
-            listArea.removeAll();
-            listArea.add(javaList);
         }
     }
 
@@ -152,13 +141,13 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            String inputTitle = JOptionPane.showInputDialog("Enter Movie Title:");
-            listModel = new DefaultListModel<>();
-            listModel.addElement(ml.findMovie(inputTitle).movieToString());
-            javaList = new JList<>(listModel);
-
-            listArea.removeAll();
-            listArea.add(javaList);
+            String inputTitle = JOptionPane.showInputDialog("Enter movie title:");
+            if (ml.findMovie(inputTitle) == null) {
+                JOptionPane.showMessageDialog(null, ERROR_MSG);
+            } else {
+                listModel.clear();
+                listModel.addElement(ml.findMovie(inputTitle).movieToString());
+            }
         }
     }
 
@@ -170,13 +159,13 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            String inputCategory = JOptionPane.showInputDialog("Enter Category:");
-            listModel = new DefaultListModel<>();
-            listModel.addAll(ml.listToMovieList(ml.filterCategory(inputCategory)).movieListToListOfString());
-            javaList = new JList<>(listModel);
-
-            listArea.removeAll();
-            listArea.add(javaList);
+            String inputCategory = JOptionPane.showInputDialog("Enter category:");
+            if (ml.filterCategory(inputCategory).isEmpty()) {
+                JOptionPane.showMessageDialog(null, ERROR_MSG);
+            } else {
+                listModel.clear();
+                listModel.addAll(ml.listToMovieList(ml.filterCategory(inputCategory)).movieListToListOfString());
+            }
         }
     }
 
@@ -188,15 +177,14 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            String inputMinRating = JOptionPane.showInputDialog("Enter Minimum Rating:");
+            String inputMinRating = JOptionPane.showInputDialog("Enter minimum rating:");
             int r = Integer.parseInt(inputMinRating);
-            listModel = new DefaultListModel<>();
-            listModel.addAll(ml.listToMovieList(ml.filterRating(r)).movieListToListOfString());
-            javaList = new JList<>(listModel);
-
-            listArea.removeAll();
-            listArea.add(javaList);
-
+            if (ml.filterRating(r).isEmpty()) {
+                JOptionPane.showMessageDialog(null, ERROR_MSG);
+            } else {
+                listModel.clear();
+                listModel.addAll(ml.listToMovieList(ml.filterRating(r)).movieListToListOfString());
+            }
         }
     }
 
@@ -208,12 +196,12 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            listModel = new DefaultListModel<>();
-            listModel.addAll(ml.listToMovieList(ml.getListOfUnwatched()).movieListToListOfString());
-            javaList = new JList<>(listModel);
-
-            listArea.removeAll();
-            listArea.add(javaList);
+            if (ml.getListOfUnwatched().isEmpty()) {
+                JOptionPane.showMessageDialog(null, ERROR_MSG);
+            } else {
+                listModel.clear();
+                listModel.addAll(ml.listToMovieList(ml.getListOfUnwatched()).movieListToListOfString());
+            }
         }
     }
 
@@ -225,25 +213,43 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            mlApp.saveToFile();
+
+            try {
+                jsonWriter.open();
+                jsonWriter.write(ml);
+                jsonWriter.close();
+                JOptionPane.showMessageDialog(null, "Your Movie List has been saved");
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(null, "Unable to save file");
+            }
         }
     }
 
     private class LoadAction extends AbstractAction {
 
         LoadAction() {
-            super("Load your Saved Movie List");
+            super("Load your saved Movie List");
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            mlApp.doLoadMovieList();
+            try {
+                ml = jsonReader.read();
+                JOptionPane.showMessageDialog(null,"Loaded your Movie List from "
+                        + JSON_DESTINATION + "\nSelect All Movies to view");
+            } catch (IOException e) {
+                System.out.println("Unable to read file");
+            }
         }
     }
 
 
     //todo
     public static void main(String[] args) {
-        new MovieListUI();
+        try {
+            new MovieListUI();
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Could not find file");
+        }
     }
 }
