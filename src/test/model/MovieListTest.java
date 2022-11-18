@@ -58,8 +58,9 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
 
-        assertEquals("\nMovie: Good Time, Category: Thriller, Rating: 0" +
-                "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" + "\n", this.myMovieList.filterCategory("Thriller"));
+        assertEquals(2, myMovieList.filterCategory("Thriller").size());
+        assertTrue(myMovieList.filterCategory("Thriller").contains(movie1));
+        assertTrue(myMovieList.filterCategory("Thriller").contains(movie2));
     }
 
     @Test
@@ -68,9 +69,9 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
 
-        //List<Movie> listOfMovies = this.myMovieList.filterCategory("Horror");
-        assertEquals("\n", this.myMovieList.filterCategory("Horror"));
+        assertTrue(myMovieList.filterCategory("Horror").isEmpty());
     }
+
 
     @Test
     void testFilterRating() {
@@ -78,33 +79,13 @@ public class MovieListTest {
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
         this.myMovieList.addMovieToList(movie4);
-        this.movie4.setRating(7);
-        this.movie2.setRating(9);
-
-        assertEquals("\nMovie: Nightcrawler, Category: Thriller, Rating: 9" +
-                "\nMovie: Gattaca, Category: Sci-fi, Rating: 7" + "\n", this.myMovieList.filterRating(7));
-    }
-
-    @Test
-    void testFilterRatingUnder() {
-        this.myMovieList.addMovieToList(movie1);
-        this.myMovieList.addMovieToList(movie2);
-        this.myMovieList.addMovieToList(movie3);
-        this.myMovieList.addMovieToList(movie4);
+        this.movie3.setRating(5);
+        this.movie2.setRating(6);
         this.movie4.setRating(7);
 
-        assertEquals("\nMovie: Gattaca, Category: Sci-fi, Rating: 7" + "\n", this.myMovieList.filterRating(6));
-    }
-
-    @Test
-    void testFilterRatingOver() {
-        this.myMovieList.addMovieToList(movie1);
-        this.myMovieList.addMovieToList(movie2);
-        this.myMovieList.addMovieToList(movie3);
-        this.myMovieList.addMovieToList(movie4);
-        this.movie4.setRating(7);
-
-        assertEquals("\n", this.myMovieList.filterRating(8));
+        assertEquals(2, this.myMovieList.filterRating(6).size());
+        assertTrue(myMovieList.filterRating(6).contains(movie4));
+        assertTrue(myMovieList.filterRating(6).contains(movie2));
     }
 
 
@@ -132,19 +113,22 @@ public class MovieListTest {
 
     @Test
     void testListOfUnwatched() {
+        assertTrue(myMovieList.getListOfUnwatched().isEmpty());
         this.myMovieList.addMovieToList(movie1);
         this.myMovieList.addMovieToList(movie2);
         this.myMovieList.addMovieToList(movie3);
         this.myMovieList.addMovieToList(movie4);
         this.movie4.setRating(7);
 
-        assertEquals("\nMovie: Good Time, Category: Thriller, Rating: 0" +
-                "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" +
-                "\nMovie: Tenet, Category: Sci-fi, Rating: 0" + "\n", this.myMovieList.getListOfUnwatched());
+        assertEquals(3, this.myMovieList.getListOfUnwatched().size());
+        assertTrue(myMovieList.getListOfUnwatched().contains(movie1));
+        assertTrue(myMovieList.getListOfUnwatched().contains(movie2));
+        assertTrue(myMovieList.getListOfUnwatched().contains(movie3));
+        assertFalse(myMovieList.getListOfUnwatched().contains(movie4));
     }
 
     @Test
-    void testMovieListToListOfString() {
+    void testMovieListToString() {
         assertEquals("\n", myMovieList.movieListToString());
 
         this.myMovieList.addMovieToList(movie1);
@@ -156,6 +140,25 @@ public class MovieListTest {
                         "\nMovie: Nightcrawler, Category: Thriller, Rating: 0" +
                         "\nMovie: Tenet, Category: Sci-fi, Rating: 7" + "\n",
                 myMovieList.movieListToString());
+    }
+
+    @Test
+    void testMovieListToListOfString() {
+        assertTrue(myMovieList.movieListToListOfString().isEmpty());
+
+        this.myMovieList.addMovieToList(movie1);
+        this.myMovieList.addMovieToList(movie2);
+        this.myMovieList.addMovieToList(movie3);
+
+        assertEquals(3, myMovieList.movieListToListOfString().size());
+    }
+
+    @Test
+    void testListToMovieList() {
+        this.myMovieList.addMovieToList(movie1);
+        this.myMovieList.addMovieToList(movie2);
+        assertEquals(movie1, myMovieList.listToMovieList(myMovieList.getListOfUnwatched()).findMovie(movie1.getName()));
+        assertEquals(movie2, myMovieList.listToMovieList(myMovieList.getListOfUnwatched()).findMovie(movie2.getName()));
     }
 
 }

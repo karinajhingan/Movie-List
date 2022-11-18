@@ -155,7 +155,7 @@ public class MovieListApp {
         if (this.ml.filterCategory(category).equals("\n")) {
             System.out.print("\nCould not find any " + category + " movies.");
         }
-        System.out.print(this.ml.filterCategory(category));
+        System.out.print(ml.listToMovieList(this.ml.filterCategory(category)).movieListToString());
     }
 
     //MODIFIES: this
@@ -166,7 +166,7 @@ public class MovieListApp {
         if (this.ml.filterRating(r).equals("\n")) {
             System.out.print("\nCould not find any movies with a rating of " + r + " or higher.\n");
         } else {
-            System.out.print(this.ml.filterRating(r).toString());
+            System.out.print(ml.listToMovieList(this.ml.filterRating(r)).movieListToString());
         }
     }
 
@@ -176,7 +176,7 @@ public class MovieListApp {
         if (this.ml.getListOfUnwatched().equals("\n")) {
             System.out.print("\nYou have watched all the movies in your list.\n");
         } else {
-            System.out.print(this.ml.getListOfUnwatched().toString());
+            System.out.print(ml.listToMovieList(this.ml.getListOfUnwatched()).movieListToString());
         }
     }
 

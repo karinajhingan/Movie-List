@@ -9,6 +9,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -27,8 +29,11 @@ public class MovieListUI extends JFrame {
     private JList javaList;
     private DefaultListModel<String> listModel;
 
+    private ImageIcon filmReelIcon;
+
     private static final String ERROR_MSG = "Error: Could not find Movie";
 
+    //EFFECTS: Creates and displays GUI of MovieList Application
     public MovieListUI() throws FileNotFoundException {
         super("Movie List");
         ml = new MovieList();
@@ -36,8 +41,13 @@ public class MovieListUI extends JFrame {
         jsonWriter = new JsonWriter(JSON_DESTINATION);
         listModel = new DefaultListModel<>();
         javaList = new JList<>(listModel);
-
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                saveBeforeClosing();
+            }
+        });
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         getContentPane().setBackground(Color.DARK_GRAY);
 
@@ -52,21 +62,25 @@ public class MovieListUI extends JFrame {
         setResizable(true);
     }
 
+    //MODIFIES: this
+    //EFFECTS: Creates area to display Movie List
     public void addListArea() {
         listArea = new JPanel();
-        listArea.setLayout(new GridLayout(0,1));
-        listArea.setSize(new Dimension(0,0));
+        listArea.setLayout(new GridLayout(0, 1));
+        listArea.setSize(new Dimension(0, 0));
         listArea.setPreferredSize(new Dimension(WIDTH / 2, HEIGHT - (2 * BORDER_GAP)));
         add(listArea, BorderLayout.WEST);
         listArea.add(javaList);
     }
 
+    //MODIFIES: this
+    //EFFECTS: Creates buttons and area to display buttons
     public void addAllButtons() {
         JPanel buttonArea = new JPanel();
         buttonArea.setLayout(new GridLayout(0, 1));
         buttonArea.setSize(new Dimension(0, 0));
         buttonArea.setPreferredSize(new Dimension(WIDTH / 3, HEIGHT - (2 * BORDER_GAP)));
-        buttonArea.setBackground(Color.black);
+        buttonArea.setBackground(Color.DARK_GRAY);
         add(buttonArea, BorderLayout.EAST);
 
         buttonArea.add(new JButton(new AllMovieAction()));
@@ -80,7 +94,8 @@ public class MovieListUI extends JFrame {
         buttonArea.add(new JButton(new LoadAction()));
     }
 
-    //todo :all below
+    //MODIFIES: listModel
+    //EFFECTS: displaying all Movies upon Action event
     private class AllMovieAction extends AbstractAction {
 
         AllMovieAction() {
@@ -94,6 +109,8 @@ public class MovieListUI extends JFrame {
         }
     }
 
+    //MODIFIES: MovieList, listModel
+    //EFFECTS: creates a Movie and add it to MovieList upon Action event
     private class AddMovieAction extends AbstractAction {
 
         AddMovieAction() {
@@ -103,15 +120,22 @@ public class MovieListUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Title:");
-            String inputCategory = JOptionPane.showInputDialog("Category:");
-            movie = new Movie(inputTitle, inputCategory);
-            ml.addMovieToList(movie);
+            if (null != ml.findMovie(inputTitle)) {
+                JOptionPane.showMessageDialog(null, "This movie is already in your list",
+                        null, JOptionPane.ERROR_MESSAGE);
+            } else {
+                String inputCategory = JOptionPane.showInputDialog("Category:");
+                movie = new Movie(inputTitle, inputCategory);
+                ml.addMovieToList(movie);
 
-            listModel.clear();
-            listModel.addAll(ml.movieListToListOfString());
+                listModel.clear();
+                listModel.addAll(ml.movieListToListOfString());
+            }
         }
     }
 
+    //MODIFIES: MovieList, listModel
+    //EFFECTS: search and rate a Movie upon Action event
     private class RateMovieAction extends AbstractAction {
 
         RateMovieAction() {
@@ -123,7 +147,7 @@ public class MovieListUI extends JFrame {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title to rate:");
             movie = ml.findMovie(inputTitle);
             if (movie == null) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG);
+                JOptionPane.showMessageDialog(null, ERROR_MSG, null, JOptionPane.ERROR_MESSAGE);
             } else {
                 String r = JOptionPane.showInputDialog("Enter rating (integer):");
                 movie.setRating(Integer.parseInt(r));
@@ -133,6 +157,9 @@ public class MovieListUI extends JFrame {
         }
     }
 
+
+    //MODIFIES: listModel
+    //EFFECTS: search and displays Movie upon Action event
     private class SearchAction extends AbstractAction {
 
         SearchAction() {
@@ -143,7 +170,7 @@ public class MovieListUI extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title:");
             if (ml.findMovie(inputTitle) == null) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG);
+                JOptionPane.showMessageDialog(null, ERROR_MSG, null, JOptionPane.ERROR_MESSAGE);
             } else {
                 listModel.clear();
                 listModel.addElement(ml.findMovie(inputTitle).movieToString());
@@ -151,6 +178,8 @@ public class MovieListUI extends JFrame {
         }
     }
 
+    //MODIFIES: listModel
+    //EFFECTS: displays filtered MovieList by category upon Action event
     private class CategoryAction extends AbstractAction {
 
         CategoryAction() {
@@ -161,7 +190,8 @@ public class MovieListUI extends JFrame {
         public void actionPerformed(ActionEvent evt) {
             String inputCategory = JOptionPane.showInputDialog("Enter category:");
             if (ml.filterCategory(inputCategory).isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG);
+                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
+                        JOptionPane.ERROR_MESSAGE);
             } else {
                 listModel.clear();
                 listModel.addAll(ml.listToMovieList(ml.filterCategory(inputCategory)).movieListToListOfString());
@@ -169,6 +199,8 @@ public class MovieListUI extends JFrame {
         }
     }
 
+    //MODIFIES: listModel
+    //EFFECTS: displays filtered MovieList by rating upn Action event
     private class RatingAction extends AbstractAction {
 
         RatingAction() {
@@ -180,7 +212,8 @@ public class MovieListUI extends JFrame {
             String inputMinRating = JOptionPane.showInputDialog("Enter minimum rating:");
             int r = Integer.parseInt(inputMinRating);
             if (ml.filterRating(r).isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG);
+                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
+                        JOptionPane.ERROR_MESSAGE);
             } else {
                 listModel.clear();
                 listModel.addAll(ml.listToMovieList(ml.filterRating(r)).movieListToListOfString());
@@ -188,6 +221,8 @@ public class MovieListUI extends JFrame {
         }
     }
 
+    //MODIFIES: listModel
+    //EFFECTS: displays unwatched MovieList upon Action event
     private class UnwatchedAction extends AbstractAction {
 
         UnwatchedAction() {
@@ -197,7 +232,8 @@ public class MovieListUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent evt) {
             if (ml.getListOfUnwatched().isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG);
+                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
+                        JOptionPane.ERROR_MESSAGE);
             } else {
                 listModel.clear();
                 listModel.addAll(ml.listToMovieList(ml.getListOfUnwatched()).movieListToListOfString());
@@ -205,6 +241,8 @@ public class MovieListUI extends JFrame {
         }
     }
 
+    //MODIFIES: MovieList
+    //EFFECTS: saves MovieList upon action event
     private class SaveAction extends AbstractAction {
 
         SaveAction() {
@@ -213,43 +251,75 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-
-            try {
-                jsonWriter.open();
-                jsonWriter.write(ml);
-                jsonWriter.close();
-                JOptionPane.showMessageDialog(null, "Your Movie List has been saved");
-            } catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(null, "Unable to save file");
-            }
+            save();
         }
     }
 
+    //MODIFIES: MovieList
+    //EFFECTS: loads MovieList from file
     private class LoadAction extends AbstractAction {
 
         LoadAction() {
-            super("Load your saved Movie List");
+            super("Load your Saved Movie List");
         }
 
         @Override
         public void actionPerformed(ActionEvent evt) {
             try {
                 ml = jsonReader.read();
-                JOptionPane.showMessageDialog(null,"Loaded your Movie List from "
-                        + JSON_DESTINATION + "\nSelect All Movies to view");
+                JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
+                        + JSON_DESTINATION + "\nSelect All Movies to view", null, JOptionPane.INFORMATION_MESSAGE,
+                        filmReelIcon);
             } catch (IOException e) {
-                System.out.println("Unable to read file");
+                JOptionPane.showMessageDialog(null, "Unable to read file", null,
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+    //MODIFIES: MovieList
+    //EFFECTS: saves MovieList
+    public void save() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(ml);
+            jsonWriter.close();
+            JOptionPane.showMessageDialog(null, "Your Movie List has been saved",
+                    null, JOptionPane.INFORMATION_MESSAGE, filmReelIcon());
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "Unable to save file", null,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
-    //todo
+    //MODIFIES: MovieList
+    //EFFECTS: prompts user to save before exiting
+    public void saveBeforeClosing() {
+        int answer = JOptionPane.showConfirmDialog((Component) null, "Would you like to save your Movie List?",
+                null, JOptionPane.YES_NO_CANCEL_OPTION);
+        if (answer == JOptionPane.YES_OPTION) {
+            save();
+            System.exit(0);
+        } else if (answer == JOptionPane.NO_OPTION) {
+            System.exit(0);
+        }
+    }
+
+    //EFFECTS: creates an ImageIcon from splashScreen.gif
+    public ImageIcon filmReelIcon() {
+        filmReelIcon = new ImageIcon(new ImageIcon(getClass().getResource("splashScreen.gif")).getImage()
+                .getScaledInstance(70, 70, Image.SCALE_DEFAULT));
+        return filmReelIcon;
+    }
+
+
+    //EFFECTS: Creates a new instance of the GUI
     public static void main(String[] args) {
         try {
             new MovieListUI();
         } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "Could not find file");
+            JOptionPane.showMessageDialog(null, "Could not find file", null,
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

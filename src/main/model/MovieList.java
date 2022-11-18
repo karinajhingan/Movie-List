@@ -84,7 +84,7 @@ public class MovieList implements Writable {
         return movieListString + "\n";
     }
 
-    //todo, add spec, and test
+    //EFFECTS: converts movie list to list of string
     public List<String> movieListToListOfString() {
         List<String> stringList = new ArrayList<>();
         for (Movie m : this.listOfMovie) {
@@ -93,7 +93,7 @@ public class MovieList implements Writable {
         return stringList;
     }
 
-    //todo add spec and test
+    //EFFECTS: converts List<Movie to type MoveList
     public MovieList listToMovieList(List<Movie> l) {
         movieList = new MovieList();
         for (Movie m : l) {
