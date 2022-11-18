@@ -14,6 +14,8 @@ import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+//Referenced: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
+//Represents MovieList GUI Frame
 public class MovieListUI extends JFrame {
     private static final int WIDTH = 800;
     private static final int HEIGHT = 800;
@@ -25,15 +27,14 @@ public class MovieListUI extends JFrame {
     private JsonWriter jsonWriter;
     private static final String JSON_DESTINATION = "./data/movieList.json";
 
-    private JPanel listArea;
-    private JList javaList;
+    private JList<String> javaList;
     private DefaultListModel<String> listModel;
 
     private ImageIcon filmReelIcon;
 
     private static final String ERROR_MSG = "Error: Could not find Movie";
 
-    //EFFECTS: Creates and displays GUI of MovieList Application
+    //EFFECTS: Constructs and displays GUI of MovieList Application
     public MovieListUI() throws FileNotFoundException {
         super("Movie List");
         ml = new MovieList();
@@ -65,7 +66,7 @@ public class MovieListUI extends JFrame {
     //MODIFIES: this
     //EFFECTS: Creates area to display Movie List
     public void addListArea() {
-        listArea = new JPanel();
+        JPanel listArea = new JPanel();
         listArea.setLayout(new GridLayout(0, 1));
         listArea.setSize(new Dimension(0, 0));
         listArea.setPreferredSize(new Dimension(WIDTH / 2, HEIGHT - (2 * BORDER_GAP)));
@@ -90,7 +91,6 @@ public class MovieListUI extends JFrame {
         buttonArea.add(new JButton(new CategoryAction()));
         buttonArea.add(new JButton(new RatingAction()));
         buttonArea.add(new JButton(new UnwatchedAction()));
-        buttonArea.add(new JButton(new SaveAction()));
         buttonArea.add(new JButton(new LoadAction()));
     }
 
@@ -109,7 +109,7 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //MODIFIES: MovieList, listModel
+    //MODIFIES: movieList, listModel
     //EFFECTS: creates a Movie and add it to MovieList upon Action event
     private class AddMovieAction extends AbstractAction {
 
@@ -134,7 +134,7 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //MODIFIES: MovieList, listModel
+    //MODIFIES: movieList, listModel
     //EFFECTS: search and rate a Movie upon Action event
     private class RateMovieAction extends AbstractAction {
 
@@ -241,21 +241,7 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //MODIFIES: MovieList
-    //EFFECTS: saves MovieList upon action event
-    private class SaveAction extends AbstractAction {
-
-        SaveAction() {
-            super("Save");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            save();
-        }
-    }
-
-    //MODIFIES: MovieList
+    //MODIFIES: movieList
     //EFFECTS: loads MovieList from file
     private class LoadAction extends AbstractAction {
 
@@ -277,7 +263,7 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //MODIFIES: MovieList
+    //MODIFIES: movieList
     //EFFECTS: saves MovieList
     public void save() {
         try {
@@ -292,10 +278,10 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //MODIFIES: MovieList
+    //MODIFIES: movieList
     //EFFECTS: prompts user to save before exiting
     public void saveBeforeClosing() {
-        int answer = JOptionPane.showConfirmDialog((Component) null, "Would you like to save your Movie List?",
+        int answer = JOptionPane.showConfirmDialog(null, "Would you like to save your Movie List?",
                 null, JOptionPane.YES_NO_CANCEL_OPTION);
         if (answer == JOptionPane.YES_OPTION) {
             save();

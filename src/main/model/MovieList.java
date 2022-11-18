@@ -8,10 +8,9 @@ import persistence.Writable;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//Represents a List of Movies
 public class MovieList implements Writable {
     private final List<Movie> listOfMovie;
-    private MovieList movieList;
 
     //EFFECTS: constructs an empty ArrayList that holds Movies
     public MovieList() {
@@ -95,7 +94,7 @@ public class MovieList implements Writable {
 
     //EFFECTS: converts List<Movie to type MoveList
     public MovieList listToMovieList(List<Movie> l) {
-        movieList = new MovieList();
+        MovieList movieList = new MovieList();
         for (Movie m : l) {
             movieList.addMovieToList(m);
         }

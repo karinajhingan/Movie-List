@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.Scanner;
 
 // Referenced https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
+//Represents a Console Based Application
 
 public class MovieListApp {
-    private Movie mo;
     private MovieList ml;
     private Scanner input;
     private JsonWriter jsonWriter;
@@ -30,7 +30,7 @@ public class MovieListApp {
     //EFFECTS: runs movieList
     private void runMovieList() {
         boolean keepGoing = true;
-        String command = null;
+        String command;
         input = new Scanner(System.in);
 
         init();
@@ -110,11 +110,11 @@ public class MovieListApp {
         String title = input.next();
         System.out.print("Enter movie Category: ");
         String category = input.next();
-        this.mo = new Movie(title, category);
+        Movie mo = new Movie(title, category);
         if (null != this.ml.findMovie(title)) {
             System.out.print("\nThis Movie is already in your list.\n");
         } else {
-            this.ml.addMovieToList(this.mo);
+            this.ml.addMovieToList(mo);
         }
     }
 
@@ -136,7 +136,7 @@ public class MovieListApp {
     //MODIFIES: this
     //EFFECTS: conducts searching a movie from the list
     public void doFindMovie() {
-        String title = "";
+        String title;
         System.out.print("Enter title: ");
         title = input.next();
         Movie m = this.ml.findMovie(title);
@@ -152,7 +152,7 @@ public class MovieListApp {
     public void doFilterCategory() {
         System.out.print("Enter category: ");
         String category = input.next().toLowerCase();
-        if (this.ml.filterCategory(category).equals("\n")) {
+        if (this.ml.filterCategory(category).isEmpty()) {
             System.out.print("\nCould not find any " + category + " movies.");
         }
         System.out.print(ml.listToMovieList(this.ml.filterCategory(category)).movieListToString());
@@ -163,7 +163,7 @@ public class MovieListApp {
     public void doFilterRating() {
         System.out.print("Enter minimum rating (integer from 1-10): ");
         int r = input.nextInt();
-        if (this.ml.filterRating(r).equals("\n")) {
+        if (this.ml.filterRating(r).isEmpty()) {
             System.out.print("\nCould not find any movies with a rating of " + r + " or higher.\n");
         } else {
             System.out.print(ml.listToMovieList(this.ml.filterRating(r)).movieListToString());
@@ -173,7 +173,7 @@ public class MovieListApp {
     //MODIFIES: this
     //EFFECTS: conducts displaying all unwatched movies in list
     public void doGetUnwatched() {
-        if (this.ml.getListOfUnwatched().equals("\n")) {
+        if (this.ml.getListOfUnwatched().isEmpty()) {
             System.out.print("\nYou have watched all the movies in your list.\n");
         } else {
             System.out.print(ml.listToMovieList(this.ml.getListOfUnwatched()).movieListToString());

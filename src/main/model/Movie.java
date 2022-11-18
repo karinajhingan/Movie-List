@@ -3,11 +3,11 @@ package model;
 import org.json.JSONObject;
 import persistence.Writable;
 
+//Represents a Movie
 public class Movie implements Writable {
     private final String title;
     private final String category;
     private int rating; //[1-10], 0 means unwatched
-
 
     //EFFECTS: Constructs a Movie with a title, category, and rating.
     public Movie(String title, String category) {
