@@ -28,7 +28,7 @@ public class MovieListUI extends JFrame {
     private static final String JSON_DESTINATION = "./data/movieList.json";
 
     private JList<String> javaList;
-    private DefaultListModel<String> listModel;
+    private final DefaultListModel<String> listModel;
 
     private ImageIcon filmReelIcon;
 
