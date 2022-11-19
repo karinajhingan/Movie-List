@@ -13,6 +13,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 //Referenced: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Represents MovieList GUI Frame
@@ -104,8 +106,7 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            listModel.clear();
-            listModel.addAll(ml.movieListToListOfString());
+            addList(ml, "all", null);
         }
     }
 
@@ -127,9 +128,7 @@ public class MovieListUI extends JFrame {
                 String inputCategory = JOptionPane.showInputDialog("Category:");
                 movie = new Movie(inputTitle, inputCategory);
                 ml.addMovieToList(movie);
-
-                listModel.clear();
-                listModel.addAll(ml.movieListToListOfString());
+                addList(ml, "all", null);
             }
         }
     }
@@ -152,8 +151,7 @@ public class MovieListUI extends JFrame {
                 String r = JOptionPane.showInputDialog("Enter rating (integer):");
                 movie.setRating(Integer.parseInt(r));
             }
-            listModel.clear();
-            listModel.addAll(ml.movieListToListOfString());
+            addList(ml, "all", null);
         }
     }
 
@@ -193,8 +191,7 @@ public class MovieListUI extends JFrame {
                 JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
                         JOptionPane.ERROR_MESSAGE);
             } else {
-                listModel.clear();
-                listModel.addAll(ml.listToMovieList(ml.filterCategory(inputCategory)).movieListToListOfString());
+                addList(ml, "category", inputCategory);
             }
         }
     }
@@ -215,8 +212,7 @@ public class MovieListUI extends JFrame {
                 JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
                         JOptionPane.ERROR_MESSAGE);
             } else {
-                listModel.clear();
-                listModel.addAll(ml.listToMovieList(ml.filterRating(r)).movieListToListOfString());
+                addList(ml, "rating", inputMinRating);
             }
         }
     }
@@ -235,8 +231,7 @@ public class MovieListUI extends JFrame {
                 JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
                         JOptionPane.ERROR_MESSAGE);
             } else {
-                listModel.clear();
-                listModel.addAll(ml.listToMovieList(ml.getListOfUnwatched()).movieListToListOfString());
+                addList(ml, "unwatched", null);
             }
         }
     }
@@ -254,8 +249,8 @@ public class MovieListUI extends JFrame {
             try {
                 ml = jsonReader.read();
                 JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
-                        + JSON_DESTINATION + "\nSelect All Movies to view", null, JOptionPane.INFORMATION_MESSAGE,
-                        filmReelIcon);
+                                + JSON_DESTINATION + "\nSelect All Movies to view", null,
+                        JOptionPane.INFORMATION_MESSAGE, filmReelIcon);
             } catch (IOException e) {
                 JOptionPane.showMessageDialog(null, "Unable to read file", null,
                         JOptionPane.ERROR_MESSAGE);
@@ -296,6 +291,26 @@ public class MovieListUI extends JFrame {
         filmReelIcon = new ImageIcon(new ImageIcon(getClass().getResource("splashScreen.gif")).getImage()
                 .getScaledInstance(70, 70, Image.SCALE_DEFAULT));
         return filmReelIcon;
+    }
+
+    //MODIFIES: listModel
+    //EFFECTS: clears listModel and adds each element of list to listModel
+    public void addList(MovieList list, String filterBy, String filterWith) {
+        listModel.clear();
+        List<Movie> tempList = list.getListOfMovie();
+        if (filterBy.equals("category")) {
+            tempList = list.filterCategory(filterWith);
+            tempList.toArray();
+        } else if (filterBy.equals("rating")) {
+            tempList = list.filterRating(Integer.parseInt(filterWith));
+            tempList.toArray();
+        } else if (filterBy.equals("unwatched")) {
+            tempList = list.getListOfUnwatched();
+            tempList.toArray();
+        }
+        for (Movie m : tempList) {
+            listModel.addElement(m.movieToString());
+        }
     }
 
 
