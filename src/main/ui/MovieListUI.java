@@ -21,8 +21,9 @@ public class MovieListUI extends JFrame {
     private static final int WIDTH = 1000;
     private static final int HEIGHT = 1000;
     private static final int BORDER_GAP = 13;
-    private static final Color BACKGROUND_COLOR = Color.DARK_GRAY;
-    private static final Color BORDER_COLOR = Color.BLACK;
+    private static final Color BACKGROUND_COLOR = Color.BLACK;
+    private static final Color BORDER_COLOR = Color.DARK_GRAY;
+    private static final Color TEXT_COLOR = Color.white;
 
     private String listTitle = "Movies";
     private MovieList ml;
@@ -36,7 +37,7 @@ public class MovieListUI extends JFrame {
     private final DefaultListModel<String> listModel;
     private JPanel listArea;
 
-    private ImageIcon filmReelIcon;
+    private ImageIcon directorIcon;
 
     private static final String ERROR_MSG = "Error: Could not find Movie";
 
@@ -48,6 +49,8 @@ public class MovieListUI extends JFrame {
         jsonWriter = new JsonWriter(JSON_DESTINATION);
         listModel = new DefaultListModel<>();
         javaList = new JList<>(listModel);
+        javaList.setBackground(BACKGROUND_COLOR);
+        javaList.setForeground(TEXT_COLOR);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         openCloseOperations();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -271,7 +274,7 @@ public class MovieListUI extends JFrame {
             jsonWriter.write(ml);
             jsonWriter.close();
             JOptionPane.showMessageDialog(null, "Your Movie List has been saved",
-                    null, JOptionPane.INFORMATION_MESSAGE, filmReelIcon());
+                    null, JOptionPane.INFORMATION_MESSAGE, directorIcon());
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(null, "Unable to save file", null,
                     JOptionPane.ERROR_MESSAGE);
@@ -285,7 +288,7 @@ public class MovieListUI extends JFrame {
             ml = jsonReader.read();
             JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
                             + JSON_DESTINATION + "\nSelect All Movies to view", null,
-                    JOptionPane.INFORMATION_MESSAGE, filmReelIcon);
+                    JOptionPane.INFORMATION_MESSAGE, directorIcon);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Unable to read file", null,
                     JOptionPane.ERROR_MESSAGE);
@@ -314,11 +317,11 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //EFFECTS: creates an ImageIcon from filmReel.gif
-    public ImageIcon filmReelIcon() {
-        filmReelIcon = new ImageIcon(new ImageIcon(getClass().getResource("filmReel.gif")).getImage()
+    //EFFECTS: creates an ImageIcon from directorIcon.gif
+    public ImageIcon directorIcon() {
+        directorIcon = new ImageIcon(new ImageIcon(getClass().getResource("directorIcon.gif")).getImage()
                 .getScaledInstance(70, 70, Image.SCALE_DEFAULT));
-        return filmReelIcon;
+        return directorIcon;
     }
 
     //MODIFIES: listModel

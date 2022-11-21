@@ -31,6 +31,8 @@ Citations:
     Modeled the persistence package after.
 2: https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
     Modeled MovieListApp after.
-3:https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
+3: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
     Modeled the MoveListUi after.
+4: pro-air.de/proair/leistungen_film.html
+    director gif
 
