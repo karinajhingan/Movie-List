@@ -31,7 +31,7 @@ public class MovieList implements Writable {
     public List<Movie> filterCategory(String s) {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.listOfMovie) {
-            if (m.getCategory().equals(s)) {
+            if (m.getCategory().equalsIgnoreCase(s)) {
                 filteredMovieList.add(m);
             }
         }
@@ -55,7 +55,7 @@ public class MovieList implements Writable {
     //EFFECTS: returns movie where title == s or null if not found
     public Movie findMovie(String s) {
         for (Movie m : this.listOfMovie) {
-            if (m.getName().equals(s)) {
+            if (m.getName().equalsIgnoreCase(s)) {
                 return m;
             }
         }

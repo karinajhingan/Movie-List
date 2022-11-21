@@ -13,15 +13,18 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 //Referenced: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Represents MovieList GUI Frame
 public class MovieListUI extends JFrame {
-    private static final int WIDTH = 800;
-    private static final int HEIGHT = 800;
+    private static final int WIDTH = 1000;
+    private static final int HEIGHT = 1000;
     private static final int BORDER_GAP = 13;
+    private static final Color BACKGROUND_COLOR = Color.DARK_GRAY;
+    private static final Color BORDER_COLOR = Color.BLACK;
+
+    private String listTitle = "Movies";
     private MovieList ml;
     private Movie movie;
 
@@ -31,6 +34,7 @@ public class MovieListUI extends JFrame {
 
     private JList<String> javaList;
     private final DefaultListModel<String> listModel;
+    private JPanel listArea;
 
     private ImageIcon filmReelIcon;
 
@@ -45,14 +49,9 @@ public class MovieListUI extends JFrame {
         listModel = new DefaultListModel<>();
         javaList = new JList<>(listModel);
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent we) {
-                saveBeforeClosing();
-            }
-        });
+        openCloseOperations();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        getContentPane().setBackground(Color.DARK_GRAY);
+        getContentPane().setBackground(BACKGROUND_COLOR);
 
         ((JPanel) getContentPane()).setBorder(new EmptyBorder(BORDER_GAP, BORDER_GAP, BORDER_GAP, BORDER_GAP));
         setLayout(new BorderLayout());
@@ -65,15 +64,28 @@ public class MovieListUI extends JFrame {
         setResizable(true);
     }
 
+    //EFFECTS: sets up how to handle user starting/exiting the application
+    public void openCloseOperations() {
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                saveBeforeClosing();
+            }
+        });
+        loadAfterOpening();
+    }
+
     //MODIFIES: this
     //EFFECTS: Creates area to display Movie List
     public void addListArea() {
-        JPanel listArea = new JPanel();
+        listArea = new JPanel();
         listArea.setLayout(new GridLayout(0, 1));
         listArea.setSize(new Dimension(0, 0));
         listArea.setPreferredSize(new Dimension(WIDTH / 2, HEIGHT - (2 * BORDER_GAP)));
         add(listArea, BorderLayout.WEST);
         listArea.add(javaList);
+        listArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(BORDER_COLOR), listTitle));
     }
 
     //MODIFIES: this
@@ -83,7 +95,7 @@ public class MovieListUI extends JFrame {
         buttonArea.setLayout(new GridLayout(0, 1));
         buttonArea.setSize(new Dimension(0, 0));
         buttonArea.setPreferredSize(new Dimension(WIDTH / 3, HEIGHT - (2 * BORDER_GAP)));
-        buttonArea.setBackground(Color.DARK_GRAY);
+        buttonArea.setBackground(BACKGROUND_COLOR);
         add(buttonArea, BorderLayout.EAST);
 
         buttonArea.add(new JButton(new AllMovieAction()));
@@ -171,6 +183,7 @@ public class MovieListUI extends JFrame {
                 JOptionPane.showMessageDialog(null, ERROR_MSG, null, JOptionPane.ERROR_MESSAGE);
             } else {
                 listModel.clear();
+                listTitle = "Result for " + inputTitle;
                 listModel.addElement(ml.findMovie(inputTitle).movieToString());
             }
         }
@@ -246,15 +259,7 @@ public class MovieListUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            try {
-                ml = jsonReader.read();
-                JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
-                                + JSON_DESTINATION + "\nSelect All Movies to view", null,
-                        JOptionPane.INFORMATION_MESSAGE, filmReelIcon);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Unable to read file", null,
-                        JOptionPane.ERROR_MESSAGE);
-            }
+            load();
         }
     }
 
@@ -274,6 +279,20 @@ public class MovieListUI extends JFrame {
     }
 
     //MODIFIES: movieList
+    //EFFECTS: loads MovieList from file
+    public void load() {
+        try {
+            ml = jsonReader.read();
+            JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
+                            + JSON_DESTINATION + "\nSelect All Movies to view", null,
+                    JOptionPane.INFORMATION_MESSAGE, filmReelIcon);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Unable to read file", null,
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    //MODIFIES: movieList
     //EFFECTS: prompts user to save before exiting
     public void saveBeforeClosing() {
         int answer = JOptionPane.showConfirmDialog(null, "Would you like to save your Movie List?",
@@ -286,9 +305,18 @@ public class MovieListUI extends JFrame {
         }
     }
 
-    //EFFECTS: creates an ImageIcon from splashScreen.gif
+    //EFFECTS: asks User if they want to load a Movie list when they open the application
+    public void loadAfterOpening() {
+        int answer = JOptionPane.showConfirmDialog(null, "Would you like to load a saved Movie List?",
+                null, JOptionPane.YES_NO_CANCEL_OPTION);
+        if (answer == JOptionPane.YES_OPTION) {
+            load();
+        }
+    }
+
+    //EFFECTS: creates an ImageIcon from filmReel.gif
     public ImageIcon filmReelIcon() {
-        filmReelIcon = new ImageIcon(new ImageIcon(getClass().getResource("splashScreen.gif")).getImage()
+        filmReelIcon = new ImageIcon(new ImageIcon(getClass().getResource("filmReel.gif")).getImage()
                 .getScaledInstance(70, 70, Image.SCALE_DEFAULT));
         return filmReelIcon;
     }
@@ -298,19 +326,26 @@ public class MovieListUI extends JFrame {
     public void addList(MovieList list, String filterBy, String filterWith) {
         listModel.clear();
         List<Movie> tempList = list.getListOfMovie();
+        listTitle = "Movies";
         if (filterBy.equals("category")) {
             tempList = list.filterCategory(filterWith);
-            tempList.toArray();
+            listTitle = filterWith + " Movies";
         } else if (filterBy.equals("rating")) {
-            tempList = list.filterRating(Integer.parseInt(filterWith));
-            tempList.toArray();
+            int r = Integer.parseInt(filterWith);
+            tempList = list.filterRating(r);
+            if (r == 8) {
+                listTitle = "Movies rated at least an " + filterWith;
+            } else {
+                listTitle = "Movies rated at least a " + filterWith;
+            }
         } else if (filterBy.equals("unwatched")) {
             tempList = list.getListOfUnwatched();
-            tempList.toArray();
+            listTitle = "Unwatched/unrated Movies";
         }
         for (Movie m : tempList) {
             listModel.addElement(m.movieToString());
         }
+        listArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(BORDER_COLOR), listTitle));
     }
 
 
