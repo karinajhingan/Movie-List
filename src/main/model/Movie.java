@@ -8,6 +8,8 @@ public class Movie implements Writable {
     private final String title;
     private final String category;
     private int rating; //[1-10], 0 means unwatched
+    private Event event;
+
 
     //EFFECTS: Constructs a Movie with a title, category, and rating.
     public Movie(String title, String category) {
@@ -22,6 +24,8 @@ public class Movie implements Writable {
     //EFFECTS: sets the rating of the Movie
     public void setRating(int r) {
         rating = r;
+        event = new Event("Rated " + movieToString() + " a " + r);
+        EventLog.getInstance().logEvent(event);
     }
 
 

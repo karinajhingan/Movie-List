@@ -11,6 +11,7 @@ import java.util.List;
 //Represents a List of Movies
 public class MovieList implements Writable {
     private final List<Movie> listOfMovie;
+    private Event event;
 
     //EFFECTS: constructs an empty ArrayList that holds Movies
     public MovieList() {
@@ -23,6 +24,8 @@ public class MovieList implements Writable {
     public void addMovieToList(Movie m) {
         if (!listOfMovie.contains(m)) {
             this.listOfMovie.add(m);
+            event = new Event("Added: " + m.movieToString());
+            EventLog.getInstance().logEvent(event);
         }
     }
 
@@ -35,6 +38,8 @@ public class MovieList implements Writable {
                 filteredMovieList.add(m);
             }
         }
+        event = new Event("Filtered by Category: " + s);
+        EventLog.getInstance().logEvent(event);
         return filteredMovieList;
     }
 
@@ -48,6 +53,8 @@ public class MovieList implements Writable {
                 filteredMovieList.add(m);
             }
         }
+        Event event = new Event("Filtered by rating " + r);
+        EventLog.getInstance().logEvent(event);
         return filteredMovieList;
     }
 
@@ -56,6 +63,8 @@ public class MovieList implements Writable {
     public Movie findMovie(String s) {
         for (Movie m : this.listOfMovie) {
             if (m.getName().equalsIgnoreCase(s)) {
+                event = new Event("Searched for: " + s);
+                EventLog.getInstance().logEvent(event);
                 return m;
             }
         }
@@ -71,6 +80,8 @@ public class MovieList implements Writable {
                 unwatched.add(m);
             }
         }
+        event = new Event("Filtered by unwatched");
+        EventLog.getInstance().logEvent(event);
         return unwatched;
     }
 

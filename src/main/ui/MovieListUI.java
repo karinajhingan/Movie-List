@@ -1,5 +1,6 @@
 package ui;
 
+import model.EventLog;
 import model.Movie;
 import model.MovieList;
 import persistence.JsonReader;
@@ -18,12 +19,14 @@ import java.util.List;
 //Referenced: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Represents MovieList GUI Frame
 public class MovieListUI extends JFrame {
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 1000;
-    private static final int BORDER_GAP = 13;
-    private static final Color BACKGROUND_COLOR = Color.BLACK;
-    private static final Color BORDER_COLOR = Color.DARK_GRAY;
-    private static final Color TEXT_COLOR = Color.white;
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 1000;
+    public static final int BORDER_GAP = 13;
+    public static final Color BACKGROUND_COLOR = Color.BLACK;
+    public static final Color BORDER_COLOR = Color.DARK_GRAY;
+    private static final Color TEXT_COLOR = Color.lightGray;
+    private static final int BUTTON_WIDTH = 10;
+    private static final int BUTTON_HEIGHT = 30;
 
     private String listTitle = "Movies";
     private MovieList ml;
@@ -51,7 +54,6 @@ public class MovieListUI extends JFrame {
         javaList = new JList<>(listModel);
         javaList.setBackground(BACKGROUND_COLOR);
         javaList.setForeground(TEXT_COLOR);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         openCloseOperations();
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         getContentPane().setBackground(BACKGROUND_COLOR);
@@ -65,6 +67,7 @@ public class MovieListUI extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(true);
+        addList(ml, "all", null);
     }
 
     //EFFECTS: sets up how to handle user starting/exiting the application
@@ -108,7 +111,6 @@ public class MovieListUI extends JFrame {
         buttonArea.add(new JButton(new CategoryAction()));
         buttonArea.add(new JButton(new RatingAction()));
         buttonArea.add(new JButton(new UnwatchedAction()));
-        buttonArea.add(new JButton(new LoadAction()));
     }
 
     //MODIFIES: listModel
@@ -238,7 +240,7 @@ public class MovieListUI extends JFrame {
     private class UnwatchedAction extends AbstractAction {
 
         UnwatchedAction() {
-            super("View Unwatched Movies");
+            super("Unwatched Movies");
         }
 
         @Override
@@ -249,20 +251,6 @@ public class MovieListUI extends JFrame {
             } else {
                 addList(ml, "unwatched", null);
             }
-        }
-    }
-
-    //MODIFIES: movieList
-    //EFFECTS: loads MovieList from file
-    private class LoadAction extends AbstractAction {
-
-        LoadAction() {
-            super("Load your Saved Movie List");
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent evt) {
-            load();
         }
     }
 
@@ -287,8 +275,7 @@ public class MovieListUI extends JFrame {
         try {
             ml = jsonReader.read();
             JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
-                            + JSON_DESTINATION + "\nSelect All Movies to view", null,
-                    JOptionPane.INFORMATION_MESSAGE, directorIcon);
+                            + JSON_DESTINATION, null, JOptionPane.INFORMATION_MESSAGE, directorIcon());
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Unable to read file", null,
                     JOptionPane.ERROR_MESSAGE);
@@ -299,13 +286,11 @@ public class MovieListUI extends JFrame {
     //EFFECTS: prompts user to save before exiting
     public void saveBeforeClosing() {
         int answer = JOptionPane.showConfirmDialog(null, "Would you like to save your Movie List?",
-                null, JOptionPane.YES_NO_CANCEL_OPTION);
+                null, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, directorIcon());
         if (answer == JOptionPane.YES_OPTION) {
             save();
-            System.exit(0);
-        } else if (answer == JOptionPane.NO_OPTION) {
-            System.exit(0);
         }
+        System.exit(0);
     }
 
     //EFFECTS: asks User if they want to load a Movie list when they open the application
