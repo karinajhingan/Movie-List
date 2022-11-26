@@ -5,9 +5,8 @@ import java.util.Date;
 
 
 //Copied from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
-/**
- * Represents an alarm system event.
- */
+
+//Represents a Movie List event.//
 public class Event {
     private static final int HASH_CONSTANT = 13;
     private Date dateLogged;

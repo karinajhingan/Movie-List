@@ -1,5 +1,6 @@
 package ui;
 
+import model.Event;
 import model.EventLog;
 import model.Movie;
 import model.MovieList;
@@ -18,15 +19,13 @@ import java.util.List;
 
 //Referenced: https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Represents MovieList GUI Frame
-public class MovieListUI extends JFrame {
+public class MovieListUI extends JFrame implements LogPrinter {
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
     public static final int BORDER_GAP = 13;
     public static final Color BACKGROUND_COLOR = Color.BLACK;
     public static final Color BORDER_COLOR = Color.DARK_GRAY;
     private static final Color TEXT_COLOR = Color.lightGray;
-    private static final int BUTTON_WIDTH = 10;
-    private static final int BUTTON_HEIGHT = 30;
 
     private String listTitle = "Movies";
     private MovieList ml;
@@ -39,8 +38,6 @@ public class MovieListUI extends JFrame {
     private JList<String> javaList;
     private final DefaultListModel<String> listModel;
     private JPanel listArea;
-
-    private ImageIcon directorIcon;
 
     private static final String ERROR_MSG = "Error: Could not find Movie";
 
@@ -290,6 +287,7 @@ public class MovieListUI extends JFrame {
         if (answer == JOptionPane.YES_OPTION) {
             save();
         }
+        printLog(EventLog.getInstance());
         System.exit(0);
     }
 
@@ -304,7 +302,7 @@ public class MovieListUI extends JFrame {
 
     //EFFECTS: creates an ImageIcon from directorIcon.gif
     public ImageIcon directorIcon() {
-        directorIcon = new ImageIcon(new ImageIcon(getClass().getResource("directorIcon.gif")).getImage()
+        ImageIcon directorIcon = new ImageIcon(new ImageIcon(getClass().getResource("directorIcon.gif")).getImage()
                 .getScaledInstance(70, 70, Image.SCALE_DEFAULT));
         return directorIcon;
     }
@@ -335,6 +333,15 @@ public class MovieListUI extends JFrame {
         }
         listArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(BORDER_COLOR), listTitle));
     }
+
+    @Override
+    //EFFECTS:prints out Event log ot console
+    public void printLog(EventLog eventLog) {
+        for (Event event : eventLog) {
+            System.out.println(event + "\n");
+        }
+    }
+
 
 
     //EFFECTS: Creates a new instance of the GUI

@@ -24,7 +24,7 @@ public class Movie implements Writable {
     //EFFECTS: sets the rating of the Movie
     public void setRating(int r) {
         rating = r;
-        event = new Event("Rated " + movieToString() + " a " + r);
+        event = new Event("Rated " + movieToString());
         EventLog.getInstance().logEvent(event);
     }
 

@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 //Copied from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 /**
- * Represents a log of alarm system events.
+ * Represents a log of Movie List events.
  * We use the Singleton Design Pattern to ensure that there is only
  * one EventLog in the system and that the system has global access
  * to the single instance of the EventLog.
