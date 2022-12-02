@@ -10,10 +10,11 @@ import java.io.IOException;
 import java.util.Scanner;
 
 // Referenced https://github.students.cs.ubc.ca/CPSC210/TellerApp.git
-//Represents a Console Based Application
 
+//Represents a Console Based Application
 public class MovieListApp {
     private MovieList ml;
+    private Movie movie;
     private Scanner input;
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
@@ -110,11 +111,11 @@ public class MovieListApp {
         String title = input.next();
         System.out.print("Enter movie Category: ");
         String category = input.next();
-        Movie mo = new Movie(title, category);
+        movie = new Movie(title, category);
         if (null != this.ml.findMovie(title)) {
             System.out.print("\nThis Movie is already in your list.\n");
         } else {
-            this.ml.addMovieToList(mo);
+            this.ml.addMovieToList(movie);
         }
     }
 
@@ -124,10 +125,10 @@ public class MovieListApp {
         System.out.print("Enter movie title to rate: ");
         String title = input.next();
         if (null != this.ml.findMovie(title)) {
-            Movie foundMovie = this.ml.findMovie(title);
+            movie = this.ml.findMovie(title);
             System.out.print("Enter rating (integer from 1-10): ");
             int r = input.nextInt();
-            foundMovie.setRating(r);
+            movie.setRating(r);
         } else {
             System.out.print("\nCould not find movie.\n");
         }
@@ -139,9 +140,9 @@ public class MovieListApp {
         String title;
         System.out.print("Enter title: ");
         title = input.next();
-        Movie m = this.ml.findMovie(title);
-        if (null != m) {
-            System.out.print(m.movieToString());
+        movie = this.ml.findMovie(title);
+        if (null != movie) {
+            System.out.print(movie.movieToString());
         } else {
             System.out.print("\nCould not find movie.\n");
         }

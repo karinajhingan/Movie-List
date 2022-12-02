@@ -1,5 +1,7 @@
 package persistence;
 
+import model.Event;
+import model.EventLog;
 import model.Movie;
 import model.MovieList;
 import org.json.JSONArray;
@@ -15,6 +17,7 @@ import java.util.stream.Stream;
 //Represents a reader that reads a movie list from JSON data in a file
 public class JsonReader {
     private String source;
+    private Event event;
 
     //EFFECTS: constructs a reader for the file
     public JsonReader(String source) {
@@ -26,6 +29,8 @@ public class JsonReader {
     public MovieList read() throws IOException {
         String jsonData = readFile(source);
         JSONObject jsonObject = new JSONObject(jsonData);
+        event = new Event("Loaded Movie List");
+        EventLog.getInstance().logEvent(event);
         return parseMovieList(jsonObject);
     }
 

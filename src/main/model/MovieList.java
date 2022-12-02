@@ -38,7 +38,7 @@ public class MovieList implements Writable {
                 filteredMovieList.add(m);
             }
         }
-        event = new Event("Filtered by Category: " + s);
+        event = new Event("Filtered by category: " + s);
         EventLog.getInstance().logEvent(event);
         return filteredMovieList;
     }
@@ -53,7 +53,7 @@ public class MovieList implements Writable {
                 filteredMovieList.add(m);
             }
         }
-        Event event = new Event("Filtered by rating " + r);
+        Event event = new Event("Filtered by rating: " + r);
         EventLog.getInstance().logEvent(event);
         return filteredMovieList;
     }
@@ -63,11 +63,11 @@ public class MovieList implements Writable {
     public Movie findMovie(String s) {
         for (Movie m : this.listOfMovie) {
             if (m.getName().equalsIgnoreCase(s)) {
-                event = new Event("Searched for: " + s);
-                EventLog.getInstance().logEvent(event);
                 return m;
             }
         }
+        event = new Event("Searched for: " + s);
+        EventLog.getInstance().logEvent(event);
         return null;
     }
 
@@ -117,6 +117,7 @@ public class MovieList implements Writable {
         return this.listOfMovie;
     }
 
+    //EFFECTS: converts a MovieList to a Json Object
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

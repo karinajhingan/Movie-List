@@ -1,6 +1,6 @@
 package model.exception;
 
-
+////Copied from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Exception when printing log
 public class LogException extends Exception {
     public LogException() {

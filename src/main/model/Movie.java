@@ -24,7 +24,7 @@ public class Movie implements Writable {
     //EFFECTS: sets the rating of the Movie
     public void setRating(int r) {
         rating = r;
-        event = new Event("Rated " + movieToString());
+        event = new Event("Rated: " + movieToString());
         EventLog.getInstance().logEvent(event);
     }
 
@@ -52,6 +52,7 @@ public class Movie implements Writable {
         return category;
     }
 
+    //EFFECTS: converts a movie to a Json Object
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

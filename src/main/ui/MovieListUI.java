@@ -33,7 +33,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
 
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
-    private static final String JSON_DESTINATION = "./data/movieList.json";
+    public static final String JSON_DESTINATION = "./data/movieList.json";
 
     private JList<String> javaList;
     private final DefaultListModel<String> listModel;
@@ -136,8 +136,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Title:");
             if (null != ml.findMovie(inputTitle)) {
-                JOptionPane.showMessageDialog(null, "This movie is already in your list",
-                        null, JOptionPane.ERROR_MESSAGE);
+                errorPane("This movie is already in your list");
             } else {
                 String inputCategory = JOptionPane.showInputDialog("Category:");
                 movie = new Movie(inputTitle, inputCategory);
@@ -160,7 +159,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title to rate:");
             movie = ml.findMovie(inputTitle);
             if (movie == null) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG, null, JOptionPane.ERROR_MESSAGE);
+                errorPane(ERROR_MSG);
             } else {
                 String r = JOptionPane.showInputDialog("Enter rating (integer):");
                 movie.setRating(Integer.parseInt(r));
@@ -182,7 +181,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title:");
             if (ml.findMovie(inputTitle) == null) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG, null, JOptionPane.ERROR_MESSAGE);
+                errorPane(ERROR_MSG);
             } else {
                 listModel.clear();
                 listTitle = "Result for " + inputTitle;
@@ -202,17 +201,12 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputCategory = JOptionPane.showInputDialog("Enter category:");
-            if (ml.filterCategory(inputCategory).isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-                addList(ml, "category", inputCategory);
-            }
+            addList(ml, "category", inputCategory);
         }
     }
 
     //MODIFIES: listModel
-    //EFFECTS: displays filtered MovieList by rating upn Action event
+    //EFFECTS: displays filtered MovieList by rating upon Action event
     private class RatingAction extends AbstractAction {
 
         RatingAction() {
@@ -222,13 +216,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputMinRating = JOptionPane.showInputDialog("Enter minimum rating:");
-            int r = Integer.parseInt(inputMinRating);
-            if (ml.filterRating(r).isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-                addList(ml, "rating", inputMinRating);
-            }
+            addList(ml, "rating", inputMinRating);
         }
     }
 
@@ -242,12 +230,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            if (ml.getListOfUnwatched().isEmpty()) {
-                JOptionPane.showMessageDialog(null, ERROR_MSG + "s", null,
-                        JOptionPane.ERROR_MESSAGE);
-            } else {
-                addList(ml, "unwatched", null);
-            }
+            addList(ml, "unwatched", null);
         }
     }
 
@@ -261,8 +244,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
             JOptionPane.showMessageDialog(null, "Your Movie List has been saved",
                     null, JOptionPane.INFORMATION_MESSAGE, directorIcon());
         } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "Unable to save file", null,
-                    JOptionPane.ERROR_MESSAGE);
+            errorPane("Unable to save file");
         }
     }
 
@@ -272,10 +254,9 @@ public class MovieListUI extends JFrame implements LogPrinter {
         try {
             ml = jsonReader.read();
             JOptionPane.showMessageDialog(null, "Loaded your Movie List from "
-                            + JSON_DESTINATION, null, JOptionPane.INFORMATION_MESSAGE, directorIcon());
+                    + JSON_DESTINATION, null, JOptionPane.INFORMATION_MESSAGE, directorIcon());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Unable to read file", null,
-                    JOptionPane.ERROR_MESSAGE);
+            errorPane("Unable to read file");
         }
     }
 
@@ -307,6 +288,12 @@ public class MovieListUI extends JFrame implements LogPrinter {
         return directorIcon;
     }
 
+    //EFFECTS: displays the given error message in an JOptionPane
+    public void errorPane(String errorMsg) {
+        JOptionPane.showMessageDialog(null, errorMsg, null,
+                JOptionPane.ERROR_MESSAGE);
+    }
+
     //MODIFIES: listModel
     //EFFECTS: clears listModel and adds each element of list to listModel
     public void addList(MovieList list, String filterBy, String filterWith) {
@@ -319,14 +306,13 @@ public class MovieListUI extends JFrame implements LogPrinter {
         } else if (filterBy.equals("rating")) {
             int r = Integer.parseInt(filterWith);
             tempList = list.filterRating(r);
-            if (r == 8) {
-                listTitle = "Movies rated at least an " + filterWith;
-            } else {
-                listTitle = "Movies rated at least a " + filterWith;
-            }
+            listTitle = "Movies rated at least " + filterWith;
         } else if (filterBy.equals("unwatched")) {
             tempList = list.getListOfUnwatched();
             listTitle = "Unwatched/unrated Movies";
+        }
+        if (!filterBy.equals("all") && tempList.isEmpty()) {
+            errorPane(ERROR_MSG + "s");
         }
         for (Movie m : tempList) {
             listModel.addElement(m.movieToString());
@@ -341,7 +327,6 @@ public class MovieListUI extends JFrame implements LogPrinter {
             System.out.println(event + "\n");
         }
     }
-
 
 
     //EFFECTS: Creates a new instance of the GUI

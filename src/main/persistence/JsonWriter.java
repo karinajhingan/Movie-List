@@ -1,5 +1,7 @@
 package persistence;
 
+import model.Event;
+import model.EventLog;
 import model.MovieList;
 import org.json.JSONObject;
 
@@ -13,6 +15,7 @@ public class JsonWriter {
     private static final int TAB = 4;
     private PrintWriter writer;
     private String destination;
+    private Event event;
 
     //EFFECTS: constructs writer for destination file
     public JsonWriter(String destination) {
@@ -30,6 +33,8 @@ public class JsonWriter {
     public void write(MovieList ml) {
         JSONObject json = ml.toJson();
         saveToFile(json.toString(TAB));
+        event = new Event("Saved Movie List");
+        EventLog.getInstance().logEvent(event);
     }
 
     //MODIFIES: this
