@@ -1,5 +1,7 @@
 package ui;
 
+import exception.DuplicateException;
+import exception.NoMoviesFoundException;
 import model.Event;
 import model.EventLog;
 import model.Movie;
@@ -135,13 +137,13 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Title:");
-            if (null != ml.findMovie(inputTitle)) {
-                errorPane("This movie is already in your list");
-            } else {
-                String inputCategory = JOptionPane.showInputDialog("Category:");
-                movie = new Movie(inputTitle, inputCategory);
+            String inputCategory = JOptionPane.showInputDialog("Category:");
+            movie = new Movie(inputTitle, inputCategory);
+            try {
                 ml.addMovieToList(movie);
                 addList(ml, "all", null);
+            } catch (DuplicateException e) {
+                errorPane(e.getMessage());
             }
         }
     }
@@ -157,13 +159,13 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title to rate:");
-            movie = ml.findMovie(inputTitle);
-            if (movie == null) {
-                errorPane(ERROR_MSG);
-            } else {
-                String r = JOptionPane.showInputDialog("Enter rating (integer):");
-                movie.setRating(Integer.parseInt(r));
+            try {
+                movie = ml.findMovie(inputTitle);
+            } catch (NoMoviesFoundException e) {
+                errorPane(e.getMessage());
             }
+            String r = JOptionPane.showInputDialog("Enter rating (integer):");
+            movie.setRating(Integer.parseInt(r));
             addList(ml, "all", null);
         }
     }
@@ -180,13 +182,14 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputTitle = JOptionPane.showInputDialog("Enter movie title:");
-            if (ml.findMovie(inputTitle) == null) {
-                errorPane(ERROR_MSG);
-            } else {
-                listModel.clear();
-                listTitle = "Result for " + inputTitle;
-                listModel.addElement(ml.findMovie(inputTitle).movieToString());
+            try {
+                movie = ml.findMovie(inputTitle);
+            } catch (NoMoviesFoundException e) {
+                errorPane(e.getMessage());
             }
+            listModel.clear();
+            listTitle = "Result for '" + inputTitle + "'";
+            listModel.addElement(movie.movieToString());
         }
     }
 

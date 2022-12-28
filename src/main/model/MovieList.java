@@ -1,6 +1,8 @@
 package model;
 
 
+import exception.DuplicateException;
+import exception.NoMoviesFoundException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -21,17 +23,19 @@ public class MovieList implements Writable {
 
     //MODIFIES: this
     //EFFECTS: adds Movie to MovieList, doesn't allow duplicates
-    public void addMovieToList(Movie m) {
+    public void addMovieToList(Movie m) throws DuplicateException {
         if (!listOfMovie.contains(m)) {
             this.listOfMovie.add(m);
             event = new Event("Added: " + m.movieToString());
             EventLog.getInstance().logEvent(event);
+        } else {
+            throw new DuplicateException(m.getName());
         }
     }
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where category == s
-    public List<Movie> filterCategory(String s) {
+    public List<Movie> filterCategory(String s) throws NoMoviesFoundException {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.listOfMovie) {
             if (m.getCategory().equalsIgnoreCase(s)) {
@@ -40,13 +44,17 @@ public class MovieList implements Writable {
         }
         event = new Event("Filtered by category: " + s);
         EventLog.getInstance().logEvent(event);
-        return filteredMovieList;
+        if (filteredMovieList.isEmpty()) {
+            throw new NoMoviesFoundException("No " + s + " movies");
+        } else {
+            return filteredMovieList;
+        }
     }
 
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where rating >= r
-    public List<Movie> filterRating(int r) {
+    public List<Movie> filterRating(int r) throws NoMoviesFoundException {
         List<Movie> filteredMovieList = new ArrayList<>();
         for (Movie m : this.listOfMovie) {
             if (m.getRating() >= r) {
@@ -55,25 +63,42 @@ public class MovieList implements Writable {
         }
         Event event = new Event("Filtered by rating: " + r);
         EventLog.getInstance().logEvent(event);
-        return filteredMovieList;
+        if (filteredMovieList.isEmpty()) {
+            throw new NoMoviesFoundException("No movies are rated at least " + r);
+        } else {
+            return filteredMovieList;
+        }
     }
 
     //MODIFIES: this
     //EFFECTS: returns movie where title == s or null if not found
-    public Movie findMovie(String s) {
+    public Movie findMovie(String s) throws NoMoviesFoundException {
+        Movie found = null;
         for (Movie m : this.listOfMovie) {
             if (m.getName().equalsIgnoreCase(s)) {
-                return m;
+                found = m;
+                return found;
             }
         }
         event = new Event("Searched for: " + s);
         EventLog.getInstance().logEvent(event);
-        return null;
+        throw new NoMoviesFoundException("No results for '" + s + "'");
+    }
+
+    public Movie randomMovie() throws NoMoviesFoundException {
+        this.getListOfUnwatched();
+        int maximum = this.getListOfUnwatched().size();
+        if (maximum == 0) {
+            throw new NoMoviesFoundException("No movies");
+        } else {
+            int random = (int) ((Math.random() * maximum));
+            return getListOfUnwatched().get(random);
+        }
     }
 
     //MODIFIES: this
     //EFFECTS: produces String of list of movies where rating == 0
-    public List<Movie> getListOfUnwatched() {
+    public List<Movie> getListOfUnwatched() throws NoMoviesFoundException {
         List<Movie> unwatched = new ArrayList<>();
         for (Movie m : this.listOfMovie) {
             if (m.getRating() == 0) {
@@ -82,7 +107,11 @@ public class MovieList implements Writable {
         }
         event = new Event("Filtered by unwatched");
         EventLog.getInstance().logEvent(event);
-        return unwatched;
+        if (unwatched.isEmpty()) {
+            throw new NoMoviesFoundException("You have watched all of your movies");
+        } else {
+            return unwatched;
+        }
     }
 
     //EFFECTS: converts all movies in movie list to string
@@ -107,7 +136,11 @@ public class MovieList implements Writable {
     public MovieList listToMovieList(List<Movie> l) {
         MovieList movieList = new MovieList();
         for (Movie m : l) {
-            movieList.addMovieToList(m);
+            try {
+                movieList.addMovieToList(m);
+            } catch (DuplicateException e) {
+                System.out.println("issue with duplicates in list");
+            }
         }
         return movieList;
     }

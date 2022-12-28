@@ -1,5 +1,7 @@
 package ui;
 
+import exception.DuplicateException;
+import exception.NoMoviesFoundException;
 import model.Movie;
 import model.MovieList;
 import persistence.JsonReader;
@@ -112,26 +114,20 @@ public class MovieListApp {
         System.out.print("Enter movie Category: ");
         String category = input.next();
         movie = new Movie(title, category);
-        if (null != this.ml.findMovie(title)) {
-            System.out.print("\nThis Movie is already in your list.\n");
-        } else {
+        try {
             this.ml.addMovieToList(movie);
+        } catch (DuplicateException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     //MODIFIES: this
     //EFFECTS: conducts rating a movie
     public void doSetRating() {
-        System.out.print("Enter movie title to rate: ");
-        String title = input.next();
-        if (null != this.ml.findMovie(title)) {
-            movie = this.ml.findMovie(title);
-            System.out.print("Enter rating (integer from 1-10): ");
-            int r = input.nextInt();
-            movie.setRating(r);
-        } else {
-            System.out.print("\nCould not find movie.\n");
-        }
+        doFindMovie();
+        System.out.print("Enter rating (integer from 1-10): ");
+        int r = input.nextInt();
+        movie.setRating(r);
     }
 
     //MODIFIES: this
@@ -140,11 +136,10 @@ public class MovieListApp {
         String title;
         System.out.print("Enter title: ");
         title = input.next();
-        movie = this.ml.findMovie(title);
-        if (null != movie) {
-            System.out.print(movie.movieToString());
-        } else {
-            System.out.print("\nCould not find movie.\n");
+        try {
+            movie = this.ml.findMovie(title);
+        } catch (NoMoviesFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -153,10 +148,11 @@ public class MovieListApp {
     public void doFilterCategory() {
         System.out.print("Enter category: ");
         String category = input.next().toLowerCase();
-        if (this.ml.filterCategory(category).isEmpty()) {
-            System.out.print("\nCould not find any " + category + " movies.");
+        try {
+            System.out.print(ml.listToMovieList(this.ml.filterCategory(category)).movieListToString());
+        } catch (NoMoviesFoundException e) {
+            System.out.println(e.getMessage());
         }
-        System.out.print(ml.listToMovieList(this.ml.filterCategory(category)).movieListToString());
     }
 
     //MODIFIES: this
@@ -164,20 +160,20 @@ public class MovieListApp {
     public void doFilterRating() {
         System.out.print("Enter minimum rating (integer from 1-10): ");
         int r = input.nextInt();
-        if (this.ml.filterRating(r).isEmpty()) {
-            System.out.print("\nCould not find any movies with a rating of " + r + " or higher.\n");
-        } else {
+        try {
             System.out.print(ml.listToMovieList(this.ml.filterRating(r)).movieListToString());
+        } catch (NoMoviesFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     //MODIFIES: this
     //EFFECTS: conducts displaying all unwatched movies in list
     public void doGetUnwatched() {
-        if (this.ml.getListOfUnwatched().isEmpty()) {
-            System.out.print("\nYou have watched all the movies in your list.\n");
-        } else {
+        try {
             System.out.print(ml.listToMovieList(this.ml.getListOfUnwatched()).movieListToString());
+        } catch (NoMoviesFoundException e) {
+            System.out.println(e.getMessage());
         }
     }
 

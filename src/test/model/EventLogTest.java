@@ -1,6 +1,7 @@
 package model;
 
-import org.junit.jupiter.api.BeforeAll;
+import exception.DuplicateException;
+import exception.NoMoviesFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.JsonReader;
@@ -9,7 +10,6 @@ import persistence.JsonWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ui.MovieListUI.JSON_DESTINATION;
@@ -20,7 +20,7 @@ public class EventLogTest {
     private Movie m1;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DuplicateException {
         eventLog.clear();
         m1 = new Movie("Interstellar", "Sci-fi");
         ml.addMovieToList(m1);
@@ -67,7 +67,7 @@ public class EventLogTest {
 
 
     @Test
-    void testEventFilterCategory() {
+    void testEventFilterCategory() throws NoMoviesFoundException {
         String category = "Sci-fi";
         ml.filterCategory(category);
         Iterator<Event> iterator = eventLog.iterator();
@@ -77,7 +77,7 @@ public class EventLogTest {
     }
 
     @Test
-    void testEventFilterRating() {
+    void testEventFilterRating() throws NoMoviesFoundException {
         int rating = 7;
         ml.filterRating(rating);
         Iterator<Event> iterator = eventLog.iterator();
@@ -87,7 +87,7 @@ public class EventLogTest {
     }
 
     @Test
-    void testEventSearch() {
+    void testEventSearch() throws NoMoviesFoundException {
         String title = "Interstellar";
         ml.findMovie(title);
         Iterator<Event> iterator = eventLog.iterator();
@@ -97,7 +97,7 @@ public class EventLogTest {
     }
 
     @Test
-    void testEventUnwatched() {
+    void testEventUnwatched() throws NoMoviesFoundException {
         ml.getListOfUnwatched();
         Iterator<Event> iterator = eventLog.iterator();
         iterator.next();

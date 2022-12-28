@@ -1,5 +1,6 @@
 package persistence;
 
+import exception.DuplicateException;
 import model.Event;
 import model.EventLog;
 import model.Movie;
@@ -71,6 +72,10 @@ public class JsonReader {
         int rating = jsonObject.getInt("rating");
         Movie movie = new Movie(title, category);
         movie.setRating(rating);
-        ml.addMovieToList(movie);
+        try {
+            ml.addMovieToList(movie);
+        } catch (DuplicateException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

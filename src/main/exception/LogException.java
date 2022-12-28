@@ -1,4 +1,4 @@
-package model.exception;
+package exception;
 
 ////Copied from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 //Exception when printing log

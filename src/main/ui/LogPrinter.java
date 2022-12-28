@@ -1,7 +1,7 @@
 package ui;
 
 import model.EventLog;
-import model.exception.LogException;
+import exception.LogException;
 
 //Copied from https://github.students.cs.ubc.ca/CPSC210/AlarmSystem.git
 /**
