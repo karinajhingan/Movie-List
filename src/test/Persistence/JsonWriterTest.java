@@ -1,5 +1,6 @@
 package Persistence;
 
+import exception.DuplicateException;
 import model.Movie;
 import model.MovieList;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class JsonWriterTest extends JsonTest {
     }
 
     @Test
-    void testWriterGeneralMovieList() {
+    void testWriterGeneralMovieList() throws DuplicateException {
         try {
             MovieList ml = new MovieList();
             Movie m1 = new Movie("Good Time", "Thriller");

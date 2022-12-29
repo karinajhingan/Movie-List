@@ -32,6 +32,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
     private String listTitle = "Movies";
     private MovieList ml;
     private Movie movie;
+    private List<Movie> listOfMovie;
 
     private JsonReader jsonReader;
     private JsonWriter jsonWriter;
@@ -41,7 +42,6 @@ public class MovieListUI extends JFrame implements LogPrinter {
     private final DefaultListModel<String> listModel;
     private JPanel listArea;
 
-    private static final String ERROR_MSG = "Error: Could not find Movie";
 
     //EFFECTS: Constructs and displays GUI of MovieList Application
     public MovieListUI() throws FileNotFoundException {
@@ -66,7 +66,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(true);
-        addList(ml, "all", null);
+        defaultListModel();
     }
 
     //EFFECTS: sets up how to handle user starting/exiting the application
@@ -78,6 +78,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
                 saveBeforeClosing();
             }
         });
+        preface();
         loadAfterOpening();
     }
 
@@ -112,7 +113,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         buttonArea.add(new JButton(new UnwatchedAction()));
     }
 
-    //MODIFIES: listModel
+    //MODIFIES: this
     //EFFECTS: displaying all Movies upon Action event
     private class AllMovieAction extends AbstractAction {
 
@@ -122,11 +123,12 @@ public class MovieListUI extends JFrame implements LogPrinter {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            addList(ml, "all", null);
+            defaultListModel();
+            // to do defaultListModel is replacing filterBy(ml, "all", null);
         }
     }
 
-    //MODIFIES: movieList, listModel
+    //MODIFIES: this
     //EFFECTS: creates a Movie and add it to MovieList upon Action event
     private class AddMovieAction extends AbstractAction {
 
@@ -141,14 +143,14 @@ public class MovieListUI extends JFrame implements LogPrinter {
             movie = new Movie(inputTitle, inputCategory);
             try {
                 ml.addMovieToList(movie);
-                addList(ml, "all", null);
+                defaultListModel();
             } catch (DuplicateException e) {
                 errorPane(e.getMessage());
             }
         }
     }
 
-    //MODIFIES: movieList, listModel
+    //MODIFIES: this
     //EFFECTS: search and rate a Movie upon Action event
     private class RateMovieAction extends AbstractAction {
 
@@ -166,12 +168,12 @@ public class MovieListUI extends JFrame implements LogPrinter {
             }
             String r = JOptionPane.showInputDialog("Enter rating (integer):");
             movie.setRating(Integer.parseInt(r));
-            addList(ml, "all", null);
+            defaultListModel();
         }
     }
 
 
-    //MODIFIES: listModel
+    //MODIFIES: this
     //EFFECTS: search and displays Movie upon Action event
     private class SearchAction extends AbstractAction {
 
@@ -187,13 +189,14 @@ public class MovieListUI extends JFrame implements LogPrinter {
             } catch (NoMoviesFoundException e) {
                 errorPane(e.getMessage());
             }
-            listModel.clear();
             listTitle = "Result for '" + inputTitle + "'";
-            listModel.addElement(movie.movieToString());
+            listOfMovie.clear();
+            listOfMovie.add(movie);
+            updateListModel();
         }
     }
 
-    //MODIFIES: listModel
+    //MODIFIES: this
     //EFFECTS: displays filtered MovieList by category upon Action event
     private class CategoryAction extends AbstractAction {
 
@@ -204,11 +207,17 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputCategory = JOptionPane.showInputDialog("Enter category:");
-            addList(ml, "category", inputCategory);
+            try {
+                listOfMovie = ml.filterCategory(inputCategory);
+            } catch (NoMoviesFoundException e) {
+                errorPane(e.getMessage());
+            }
+            listTitle = inputCategory + " Movies";
+            updateListModel();
         }
     }
 
-    //MODIFIES: listModel
+    //MODIFIES: this
     //EFFECTS: displays filtered MovieList by rating upon Action event
     private class RatingAction extends AbstractAction {
 
@@ -219,11 +228,18 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             String inputMinRating = JOptionPane.showInputDialog("Enter minimum rating:");
-            addList(ml, "rating", inputMinRating);
+            int r = Integer.parseInt(inputMinRating);
+            try {
+                listOfMovie = ml.filterRating(r);
+            } catch (NoMoviesFoundException e) {
+                errorPane(e.getMessage());
+            }
+            listTitle = "Movies rated at least " + inputMinRating;
+            updateListModel();
         }
     }
 
-    //MODIFIES: listModel
+    //MODIFIES: this
     //EFFECTS: displays unwatched MovieList upon Action event
     private class UnwatchedAction extends AbstractAction {
 
@@ -233,11 +249,17 @@ public class MovieListUI extends JFrame implements LogPrinter {
 
         @Override
         public void actionPerformed(ActionEvent evt) {
-            addList(ml, "unwatched", null);
+            try {
+                listOfMovie = ml.getListOfUnwatched();
+            } catch (NoMoviesFoundException e) {
+                errorPane(e.getMessage());
+            }
+            listTitle = "Unwatched/unrated Movies";
+            updateListModel();
         }
     }
 
-    //MODIFIES: movieList
+    //MODIFIES: this
     //EFFECTS: saves MovieList
     public void save() {
         try {
@@ -251,7 +273,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         }
     }
 
-    //MODIFIES: movieList
+    //MODIFIES: this
     //EFFECTS: loads MovieList from file
     public void load() {
         try {
@@ -263,7 +285,7 @@ public class MovieListUI extends JFrame implements LogPrinter {
         }
     }
 
-    //MODIFIES: movieList
+    //MODIFIES: this
     //EFFECTS: prompts user to save before exiting
     public void saveBeforeClosing() {
         int answer = JOptionPane.showConfirmDialog(null, "Would you like to save your Movie List?",
@@ -284,6 +306,12 @@ public class MovieListUI extends JFrame implements LogPrinter {
         }
     }
 
+    //Effects: displays a JOptionPane with a brief introduction to the app
+    //todo
+    public void preface() {
+        JOptionPane.showMessageDialog(null,"Hi");
+    }
+
     //EFFECTS: creates an ImageIcon from directorIcon.gif
     public ImageIcon directorIcon() {
         ImageIcon directorIcon = new ImageIcon(new ImageIcon(getClass().getResource("directorIcon.gif")).getImage()
@@ -297,31 +325,26 @@ public class MovieListUI extends JFrame implements LogPrinter {
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    //MODIFIES: listModel
-    //EFFECTS: clears listModel and adds each element of list to listModel
-    public void addList(MovieList list, String filterBy, String filterWith) {
-        listModel.clear();
-        List<Movie> tempList = list.getListOfMovie();
+
+    //MODIFIES: this
+    //EFFECTS: adds filtered movie list to listModel
+    public void defaultListModel() {
+        listOfMovie = ml.getListOfMovie();
         listTitle = "Movies";
-        if (filterBy.equals("category")) {
-            tempList = list.filterCategory(filterWith);
-            listTitle = filterWith + " Movies";
-        } else if (filterBy.equals("rating")) {
-            int r = Integer.parseInt(filterWith);
-            tempList = list.filterRating(r);
-            listTitle = "Movies rated at least " + filterWith;
-        } else if (filterBy.equals("unwatched")) {
-            tempList = list.getListOfUnwatched();
-            listTitle = "Unwatched/unrated Movies";
-        }
-        if (!filterBy.equals("all") && tempList.isEmpty()) {
-            errorPane(ERROR_MSG + "s");
-        }
-        for (Movie m : tempList) {
+        listModel.clear();
+        updateListModel();
+    }
+
+    //MODIFIES: this
+    //EFFECTS: clears listModel and adds each element of list to listModel
+    public void updateListModel() {
+        listModel.clear();
+        for (Movie m : listOfMovie) {
             listModel.addElement(m.movieToString());
         }
         listArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(BORDER_COLOR), listTitle));
     }
+
 
     @Override
     //EFFECTS:prints out Event log ot console
