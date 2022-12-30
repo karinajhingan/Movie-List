@@ -78,7 +78,6 @@ public class MovieListUI extends JFrame implements LogPrinter {
                 saveBeforeClosing();
             }
         });
-        preface();
         loadAfterOpening();
     }
 
@@ -124,7 +123,6 @@ public class MovieListUI extends JFrame implements LogPrinter {
         @Override
         public void actionPerformed(ActionEvent evt) {
             defaultListModel();
-            // to do defaultListModel is replacing filterBy(ml, "all", null);
         }
     }
 
@@ -304,12 +302,6 @@ public class MovieListUI extends JFrame implements LogPrinter {
         if (answer == JOptionPane.YES_OPTION) {
             load();
         }
-    }
-
-    //Effects: displays a JOptionPane with a brief introduction to the app
-    //todo
-    public void preface() {
-        JOptionPane.showMessageDialog(null,"Hi");
     }
 
     //EFFECTS: creates an ImageIcon from directorIcon.gif

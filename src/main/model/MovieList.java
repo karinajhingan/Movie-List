@@ -24,13 +24,16 @@ public class MovieList implements Writable {
     //MODIFIES: this
     //EFFECTS: adds Movie to MovieList, doesn't allow duplicates
     public void addMovieToList(Movie m) throws DuplicateException {
-        if (!listOfMovie.contains(m)) {
-            this.listOfMovie.add(m);
-            event = new Event("Added: " + m.movieToString());
-            EventLog.getInstance().logEvent(event);
-        } else {
-            throw new DuplicateException(m.getName());
+        boolean contains = false;
+        for (Movie movie : listOfMovie) {
+            contains = movie.getName().equals(m.getName());
+            if (contains) {
+                throw new DuplicateException(m.getName());
+            }
         }
+        this.listOfMovie.add(m);
+        event = new Event("Added: " + m.movieToString());
+        EventLog.getInstance().logEvent(event);
     }
 
     //MODIFIES: this

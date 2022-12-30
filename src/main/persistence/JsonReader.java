@@ -75,7 +75,7 @@ public class JsonReader {
         try {
             ml.addMovieToList(movie);
         } catch (DuplicateException e) {
-            throw new RuntimeException(e);
+            // no chance of a duplicate exception unless duplicates were written in
         }
     }
 }
